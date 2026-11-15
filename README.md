@@ -39,6 +39,8 @@ To run the logic tests (Node 18 or newer):
 NASA Human Research Program:
 
 - 5 Hazards of Human Spaceflight: https://www.nasa.gov/hrp/hazards/
+- Risks of Human Spaceflight: https://www.nasa.gov/hrp/risks/
+- Ongoing HRP Research in Space: https://www.nasa.gov/hrp/ongoing-hrp-research/
 - Hazard pages: https://www.nasa.gov/hrp/hazard-space-radiation/ , https://www.nasa.gov/hrp/hazard-isolation-and-confinement/ , https://www.nasa.gov/hrp/hazard-distance-from-earth/ , https://www.nasa.gov/hrp/hazard-gravity-fields/ , https://www.nasa.gov/hrp/hazard-hostile-closed-environments/
 - Risk from Inadequate Sleep and Irregular Schedules: https://www.nasa.gov/reference/risk-from-inadequate-sleep-and-irregular-schedules/
 - Risk of Cardiovascular Adaptations: https://www.nasa.gov/reference/risk-of-cardiovascular-adaptations/
@@ -70,8 +72,9 @@ This prototype builds on a problem NASA has worked on for years. It does not cla
 
 - Medical Data Architecture, led from NASA Ames: ground prototypes of a system to give the crew actionable medical information without ground support. https://ntrs.nasa.gov/citations/20200000568
 - Autonomous Medical Operations: a project for an on-board Medical Decision Support System, now listed by NASA as archived. https://www.nasa.gov/directorates/stmd/game-changing-development-program/autonomous-medical-operations-amo/
+- Clinical decision support concept of operations, NASA Exploration Medical Capability: an on-board system to help the crew medical officer, and crew who are not medical experts, assess and respond to health problems. https://ntrs.nasa.gov/citations/20220017856
 
-Those projects aim at the crew medical officer, clinical decision support and joining up medical data. This prototype is a crew-facing layer for any crew member: three checks on every reading, a plain summary and an ordered plan.
+That work covers decision support for the medical officer and for non-expert crew, and joining up medical data. What we found published is at the concept, requirements and ground prototype stage. This prototype is a small working demonstration of one crew-facing part, for routine readings: three checks on every reading, a plain summary and an ordered plan.
 
 ## Use of AI
 

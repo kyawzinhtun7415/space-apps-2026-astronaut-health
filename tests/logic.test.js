@@ -382,3 +382,9 @@ test("task check: a spacewalk holds under 7 hours of sleep, cabin work under 6",
   assert.equal(out.word, "Not held by these readings");
   assert.match(out.reasons.join(" "), /not clearance/);
 });
+
+test("sources: the three NASA pages the challenge lists are in the page's source list", () => {
+  const urls = Object.values(SOURCES).map(s => s.url);
+  ["https://www.nasa.gov/hrp/hazards/", "https://www.nasa.gov/hrp/risks/", "https://www.nasa.gov/hrp/ongoing-hrp-research/"]
+    .forEach(u => assert.ok(urls.includes(u), "missing " + u));
+});

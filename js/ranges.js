@@ -5,6 +5,10 @@
 // Where a chart has no scores, outside its normal range is "watch" and its severe band is "serious".
 (function (root) {
   var S = {
+    // The three NASA pages the challenge lists under "NASA Data & Resources". The hazard and risk pages used here sit one click below them.
+    hrp_hazards: { name: "NASA, 5 Hazards of Human Spaceflight", url: "https://www.nasa.gov/hrp/hazards/" },
+    hrp_risks: { name: "NASA, Risks of Human Spaceflight", url: "https://www.nasa.gov/hrp/risks/" },
+    hrp_research: { name: "NASA, Ongoing HRP Research in Space", url: "https://www.nasa.gov/hrp/ongoing-hrp-research/" },
     nih_bp: { name: "NIH MedlinePlus, high blood pressure", url: "https://medlineplus.gov/highbloodpressure.html" },
     nih_hr: { name: "NIH MedlinePlus, pulse", url: "https://medlineplus.gov/ency/article/003399.htm" },
     rcp: { name: "NEWS2 scoring chart, Royal College of Physicians", url: "https://www.rcp.ac.uk/media/alxev00t/news2-chart-1_the-news-scoring-system_0_0.pdf" },
