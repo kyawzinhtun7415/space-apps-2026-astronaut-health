@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Astronaut Health Twin (concept prototype)</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="overview.css">
 </head>
 <body>
 <header class="top">
@@ -75,6 +76,16 @@
   </form>
 </section>
 
+<section class="card xplace" aria-labelledby="placeH">
+  <h2 id="placeH">Where you are</h2>
+  <p class="hint">Read from the mission plan, so you are not asked. The place changes what is known about your readings there and how fast Earth can answer.</p>
+  <div id="placeOut" aria-live="polite"></div>
+  <details class="xchange">
+    <summary>Wrong place? Change it</summary>
+    <div id="placeBtns" class="btnrow" role="group" aria-label="Place"></div>
+  </details>
+</section>
+
 <div class="hero">
 <section class="card today" aria-labelledby="todayH">
   <h2 id="todayH">Today: how you are doing</h2>
@@ -137,11 +148,27 @@
 </section>
 </div>
 
+<section class="card" aria-labelledby="treatH">
+  <h2 id="treatH">Treatment: what you can do, and what the medical officer decides</h2>
+  <p class="hint">The same steps as the plan above, sorted by who acts. Example steps by this team, not medical advice.</p>
+  <div id="treatOut"></div>
+</section>
+
 <section class="card" aria-labelledby="habitH">
   <h2 id="habitH">Daily habits that protect you</h2>
   <p class="hint">Each habit is taken from one of NASA's own pages. Tick them off as you go. Ticks stay in this browser.</p>
   <ul id="habits" class="habits"></ul>
   <p id="habitCount" class="habitcount" role="status"></p>
+</section>
+
+<section class="card" aria-labelledby="checkH">
+  <h2 id="checkH">Your checks today</h2>
+  <p class="hint">A prompt for each reading, read off the plan. Reminders start by themselves when the plan asks for a re-check. Demo speed: one minute passes each second. One routine check a day is this team's example schedule.</p>
+  <p id="remindMsg" class="xbanner" role="status" hidden></p>
+  <ul id="checkList" class="xchecks"></ul>
+  <h3 class="small-h">Check streak</h3>
+  <p class="hint">You earn these by taking the checks and keeping the habits. The numbers never count: a flagged reading that you logged scores the same as a normal one.</p>
+  <div id="gameOut"></div>
 </section>
 
 <main class="grid">
@@ -151,6 +178,18 @@
     <article id="panel" class="panel" aria-live="polite"></article>
   </section>
 </main>
+
+<section class="card" aria-labelledby="howH">
+  <h2 id="howH">How to use this page, and how each reading is taken</h2>
+  <ol class="xuse">
+    <li>Say where you are, then pick a sample day or type in your own readings.</li>
+    <li>Read "Today" first. It names the readings that need attention.</li>
+    <li>Follow "What to do now" from the top. The first step is the soonest.</li>
+    <li>Tap a reading or a body part to see why it is checked, how it compares, and who to tell.</li>
+    <li>Copy the report when a step says to tell Earth.</li>
+  </ol>
+  <div id="howOut" aria-live="polite"></div>
+</section>
 
 <section class="card" aria-label="Readings check for today's task">
   <h2>Readings check for today's task</h2>
@@ -165,6 +204,13 @@
   <label for="fday">Flight day <output id="fdayOut"></output></label>
   <input id="fday" type="range" min="0" step="10">
   <div id="forecast" class="fgrid"></div>
+</section>
+
+<section class="card" aria-labelledby="photoH">
+  <h2 id="photoH">Add a photo</h2>
+  <p class="hint">For something a number cannot show, such as a rash, a swollen joint or a device screen. The photo stays in this browser tab. It is listed in the report and is not analysed or sent.</p>
+  <p><label for="photoIn">Take or choose a photo</label> <input id="photoIn" type="file" accept="image/*" capture="environment"></p>
+  <div id="photoOut"></div>
 </section>
 
 <section class="card" aria-labelledby="reportH">
@@ -191,8 +237,8 @@
   <p>The summary, the pattern notes, the steps for what to do and who to tell, the task check, the symptom list and the cut-offs behind them are examples by this team. They are not NASA's rules. Score bands are quoted from the NEWS2 chart of the Royal College of Physicians. This tool does not reproduce that chart or calculate a NEWS2 total, and NEWS2 was designed for hospital patients, so it is a rough guide here. The tolerances behind "expected in space" and the act-now lines for pulse and low blood sugar are this team's own.</p>
   <h2>Sources</h2>
   <ul id="sources" class="sources"></ul>
-  <p class="ai">The 3D figure is drawn with three.js r160 (MIT licence), saved in this project. It is built from simple shapes and uses no model file.</p>
-  <p class="ai">AI assistance: this prototype was built with help from Claude (Anthropic).</p>
+  <p class="ai">The main body illustration was generated with OpenAI. The optional rotating body uses a CC0 human mesh from Innerscene, adapted from MakeHuman, and three.js r160 (MIT licence), all saved in this project. <a href="assets/PROVENANCE.md">Asset sources and licences</a>.</p>
+  <p class="ai">AI assistance: Claude (Anthropic) helped build the prototype; Codex (OpenAI) implemented the selected visual design. The team chose the idea and owns the rules.</p>
 </footer>
 
 <script src="js/sample-days.js"></script>
@@ -205,7 +251,12 @@
 <script src="js/insights.js"></script>
 <script src="js/actions.js"></script>
 <script src="vendor/three.min.js"></script>
+<script src="vendor/human-mesh-data.js"></script>
 <script src="js/twin3d.js"></script>
+<script src="js/twin-human.js"></script>
+<script src="js/extras.js"></script>
+<script src="js/extras-ui.js"></script>
 <script src="js/app.js"></script>
+<script src="js/overview.js"></script>
 </body>
 </html>

@@ -1,0 +1,191 @@
+/* Body-centred overview. Lower tools retain their existing styles and behaviour. */
+body.overview-ready {
+  --bg:#081823; --card:#0d202e; --ink:#f3f5f8; --muted:#b0c3d1; --line:#365262;
+  --accent:#7ce8ec; --ok:#7ce8ec; --watch:#ffc465; --changed:#ffc465; --serious:#ff929f;
+  padding:20px 32px 48px; background:#081823; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.overview-ready .top { max-width:1480px; padding:0 0 20px; margin:0 auto; align-items:center; border-bottom:1px solid var(--line); background:none; }
+.overview-ready .top h1 { font-size:clamp(24px,2.3vw,36px); letter-spacing:.065em; line-height:1.15; }
+.overview-ready .top .mission { font-size:13px; letter-spacing:.13em; margin:9px 0 0; }
+.overview-ready .top .sub { display:none; }
+.overview-ready .pill,.overview-ready .badge { background:none; border:1px solid var(--line); box-shadow:none; padding:9px 15px; font-size:10px; }
+.overview-ready .badge { border-color:#b99c50; color:#ffd173; max-width:245px; white-space:normal; }
+.overview { max-width:1480px; margin:0 auto; }
+.overview-ready [hidden] { display:none !important; }
+.ov-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 0 16px; }
+.ov-day { display:flex; align-items:center; gap:12px; min-width:0; }
+.ov-day label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; white-space:nowrap; }
+.ov-day select { background:#0d202e; color:var(--ink); border:1px solid #345061; border-radius:5px; padding:7px 28px 7px 10px; font:inherit; font-size:12px; max-width:370px; }
+.ov-tools { display:flex; gap:18px; align-items:center; }
+.ov-tools > button,.ov-tools > details > summary { background:none; border:0; color:var(--muted); font:inherit; font-size:12px; padding:5px 0; cursor:pointer; }
+#ovSymptoms { position:relative; }
+.ov-symptom-content { position:absolute; z-index:20; width:min(520px,90vw); right:0; top:36px; background:#102635; border:1px solid #4b7086; border-radius:8px; padding:18px; box-shadow:0 20px 60px #0009; }
+.ov-symptom-content .flags { margin:0 0 12px; border:0; padding:0; }
+.ov-grid { display:grid; grid-template-columns:1.06fr .97fr 1.08fr; gap:28px; align-items:start; padding-top:4px; min-width:0; }
+.ov-grid > section { min-width:0; }
+.ov-grid h2 { text-transform:none; letter-spacing:0; font-size:28px; font-weight:720; line-height:1.12; }
+#ovHeadline { color:var(--watch); margin:0 0 6px; }
+#ovHeadline.urgent { color:var(--serious); }
+#ovHeadline.is-ok { color:var(--accent); }
+#ovHeadline.is-missing { color:var(--muted); }
+#ovSummary,#ovSub { font-size:15px; line-height:1.5; margin:0; }
+.ov-muted { color:var(--muted); }
+#ovReadingSlot { margin:14px 0 18px; }
+.ov-left .tiles { display:block; margin:0; }
+.ov-left .tile { display:grid; grid-template-columns:1fr 1.2fr auto; gap:8px; align-items:center; border:0; border-bottom:1px solid #355262; border-radius:0; padding:6px 7px; background:none; min-height:36px; }
+.ov-left .tile:first-child { border-top:1px solid #355262; }
+.ov-left .tile[aria-pressed="true"] { background:#392735; outline:1px solid #e38c97; border-radius:5px; box-shadow:none; }
+.ov-left .tile .name { text-transform:uppercase; font-size:12px; letter-spacing:.03em; color:var(--ink); }
+.ov-left .tile .val { font-size:17px; font-weight:650; margin:0; white-space:nowrap; }
+.ov-left .tile .chip { font-size:11px; line-height:1.2; padding:3px 6px; background:none; border:1px solid currentColor; border-radius:5px; white-space:nowrap; }
+.ov-selected h3 { font-size:16px; letter-spacing:.09em; text-transform:uppercase; color:var(--watch); font-weight:650; margin:0 0 8px; }
+.ov-value-row { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+#ovValue { font-size:clamp(28px,3.6vw,53px); line-height:1.1; letter-spacing:-.035em; }
+.ov-selected[data-metric="bp"] #ovValue { font-size:32px; }
+#ovStatus .chip { background:none; font-size:10px; padding:6px 8px; }
+#ovStatus .chip span { display:none; }
+#ovCompare { margin:0 0 12px; }
+#ovCompare > div { display:grid; grid-template-columns:115px 1fr; gap:10px; padding:8px 0; border-bottom:1px solid #294352; }
+#ovCompare dt { font-size:11px; letter-spacing:.025em; text-transform:uppercase; padding-right:6px; border-right:1px solid var(--line); color:#c3d4df; display:flex; align-items:center; }
+#ovCompare dd { margin:0; display:flex; justify-content:space-between; gap:12px; align-items:center; }
+#ovCompare dd strong { font-size:14px; font-weight:600; }
+#ovCompare dd small { display:block; font-size:12px; line-height:1.35; color:var(--muted); max-width:45%; }
+#ovVerdict { font-size:14px; margin:8px 0; line-height:1.5; }
+#ovClinicalNote { font-size:12px; color:var(--muted); line-height:1.4; margin:-3px 0 8px; }
+.ov-source-link { font-size:12px; color:#adcedb; text-decoration:underline; text-underline-offset:3px; }
+#ovTrend { border-top:1px solid #365262; margin-top:17px; padding-top:9px; }
+#ovTrend .trend { margin:0; }
+#ovTrend figcaption { font-size:12px; }
+#ovTrend svg { max-width:none; height:auto; width:100%; overflow:visible; }
+#ovTrend svg text { font:11px Inter,-apple-system,sans-serif; fill:var(--muted); }
+#ovTrend svg .ov-point-label { fill:var(--ink); font-weight:600; }
+#ovTrend .ov-gridline { stroke:#294352; stroke-width:.5; }
+.ov-chart-key { font-size:10px; color:var(--muted); margin:0; }
+#ovTrend path { stroke:var(--watch); }
+#ovTrend circle { fill:var(--watch); }
+#ovTrend .base { stroke:var(--accent); }
+#ovInsight { border-left:3px solid var(--watch); padding-left:12px; font-size:16px; font-weight:600; line-height:1.35; margin:13px 0 0; }
+.ov-body { position:relative; text-align:center; padding-bottom:40px; }
+.ov-body-switch { display:flex; justify-content:center; gap:3px; position:absolute; width:100%; bottom:0; z-index:2; }
+.ov-body-switch button { background:none; border:1px solid transparent; border-radius:5px; padding:6px 9px; font:inherit; font-size:11px; color:var(--muted); cursor:pointer; }
+.ov-body-switch button[aria-pressed="true"] { color:var(--accent); border-color:#345466; }
+.ov-figure { position:relative; width:100%; max-width:420px; aspect-ratio:1/2; margin:-45px auto -15px; }
+.ov-figure img { display:block; width:100%; height:auto; pointer-events:none; }
+.body-hotspot { position:absolute; left:var(--x); top:var(--y); display:flex; align-items:center; gap:9px; min-height:44px; transform:translate(-9px,-50%); background:none; border:0; padding:4px 0; color:#d4edf2; cursor:pointer; }
+.body-hotspot i { display:block; flex:none; width:11px; height:11px; border-radius:50%; background:currentColor; box-shadow:0 0 12px currentColor; }
+.body-hotspot span { text-transform:uppercase; font-size:11px; font-weight:650; letter-spacing:.08em; background:#081823db; padding:4px 7px; border-bottom:1px solid currentColor; }
+.body-hotspot.s-watch,.body-hotspot.s-changed { color:var(--watch); }
+.body-hotspot.s-serious { color:var(--serious); }
+.body-hotspot.s-cannot { color:#b8c2d1; }
+.body-hotspot.s-ok { color:var(--accent); }
+.body-hotspot.s-expected { color:#a9c6fa; }
+.body-hotspot[aria-pressed="true"] i { outline:1px solid currentColor; outline-offset:7px; box-shadow:0 0 25px 8px #ffc46566; }
+.body-hotspot[aria-pressed="true"] span { font-weight:800; }
+#ovBodyCaption { color:#a6c3d3; font-size:11px; margin:0; }
+.ov-art-credit { color:#86a3b5; font-size:10px; margin-top:4px; }
+#ovThree { min-height:740px; }
+#ovThree .twinstage { height:730px; background:none; }
+#ovThree .twinstage canvas { touch-action:none; }
+#ovThree .twinlabel { z-index:1; }
+.ov-body-switch button:disabled { opacity:.5; cursor:default; }
+.ov-priority { display:none; }
+.ov-sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.ov-plan h2 { color:var(--watch); text-transform:uppercase; letter-spacing:.06em; font-size:23px; margin:0 0 8px; }
+.ov-team { text-transform:uppercase; letter-spacing:.06em; font-size:12px; color:#d5e0e8; margin:0 0 9px; }
+#ovReason { color:#bdcfdc; font-size:15px; line-height:1.45; margin-bottom:20px; }
+#ovActions { list-style:none; padding:0; margin:0 0 16px; }
+#ovActions li { display:flex; gap:12px; border-bottom:1px solid #365262; padding:17px 0; }
+#ovActions li > div { min-width:0; }
+#ovActions .ov-first { padding:17px 15px; border:1px solid #476a7c; border-radius:10px; margin-bottom:5px; }
+#ovActions .ov-first.is-urgent { border:1px solid #fc8e9e; background:#392733; }
+.ov-step-num { flex:none; width:25px; height:25px; display:flex; align-items:center; justify-content:center; border:1px solid var(--watch); border-radius:50%; color:var(--watch); font-size:13px; margin-top:3px; }
+.ov-first .ov-step-num { display:none; }
+.ov-first > div { padding-left:12px; border-left:4px solid var(--accent); }
+.ov-first.is-urgent > div { border-color:var(--serious); }
+.ov-when { color:var(--watch); text-transform:uppercase; letter-spacing:.06em; font-size:11px; font-weight:700; }
+.ov-first.is-urgent .ov-when { color:var(--serious); }
+#ovActions p { font-size:17px; font-weight:600; line-height:1.35; margin:4px 0 0; }
+#ovActions .ov-first p { font-size:20px; }
+.ov-action-support { display:block; font-size:15px; font-weight:400; line-height:1.5; margin-top:8px; color:#d3dde5; }
+.ov-step-source { display:none; }
+#ovActions .ov-later { padding:9px 0; border:0; gap:10px; }
+.ov-later .ov-step-num { border:0; font-size:11px; height:18px; width:16px; }
+.ov-later .ov-when { text-transform:none; letter-spacing:0; }
+#ovActions .ov-later p { display:inline; font-size:13px; font-weight:450; margin-left:7px; }
+#ovReport { width:100%; margin:22px 0 8px; padding:13px 18px; font:inherit; font-weight:650; font-size:18px; background:#102c3a; border:1px solid var(--accent); border-radius:8px; color:var(--ink); cursor:pointer; }
+#ovReport:hover { background:#18404f; }
+.ov-report-note { font-size:12px; text-align:center; color:var(--muted); }
+.ov-disclosure { display:flex; justify-content:space-between; gap:20px; padding:14px 0 0; border-top:1px solid #426376; margin:18px 0 32px; font-size:11px; color:var(--muted); }
+.ov-disclosure a { align-self:center; white-space:nowrap; }
+.ov-support { max-width:1480px; margin:28px auto 20px; border-top:1px solid var(--line); padding-top:25px; }
+.ov-support-title { font-size:24px; text-transform:none; letter-spacing:0; }
+.ov-jumps { display:flex; flex-wrap:wrap; gap:12px 22px; font-size:13px; margin:15px 0 20px; }
+.ov-details { border-bottom:1px solid #294251; padding:11px 0; }
+.ov-details > summary { cursor:pointer; font-size:14px; color:#c4d8e5; }
+.ov-details .card { max-width:none; border:0; background:none; padding:18px 0; margin:0; }
+.ov-details #panel { padding:16px 0; border:0; }
+.overview-ready .intro,.overview-ready .days,.overview-ready > .card,.overview-ready footer,.overview-ready .legend { max-width:1480px; }
+.overview-ready .days > label { display:none; }
+.overview-ready .intro { margin-top:24px; }
+.overview-ready :focus-visible { outline:2px solid #92f0f4; outline-offset:4px; }
+.overview-ready details,.overview-ready section,.overview-ready article { scroll-margin-top:24px; }
+@media(min-width:1600px) { .ov-figure { max-width:420px; } }
+@media(min-width:1181px) {
+  body.overview-ready { padding-top:12px; }
+  .overview-ready .top { padding-bottom:10px; }
+  .ov-toolbar { padding:6px 0; }
+  .ov-left .tile { padding:5px 7px; min-height:34px; }
+  #ovReadingSlot { margin:12px 0 14px; }
+  #ovCompare > div { padding:6px 0; }
+  #ovInsight { margin-top:8px; }
+  .ov-figure { margin-top:-75px; }
+  .ov-disclosure { padding-top:10px; margin-top:12px; }
+}
+@media(max-width:1180px) {
+  body.overview-ready { padding:18px 22px 40px; }
+  .ov-grid { grid-template-columns:1fr .8fr 1fr; gap:18px; }
+  .ov-grid h2 { font-size:23px; }
+  #ovValue { font-size:35px; }
+  #ovCompare > div { grid-template-columns:85px 1fr; }
+  #ovCompare dd { display:block; } #ovCompare dd small { max-width:none; margin-top:3px; }
+  .ov-left .tile { grid-template-columns:.9fr 1fr auto; gap:5px; padding:8px 2px; }
+  .ov-left .tile .name { font-size:10px; } .ov-left .tile .val { font-size:13px; }
+  .ov-left .tile .chip { font-size:9px; padding:3px; }
+  #ovActions p { font-size:15px; } #ovReason { font-size:13px; }
+  .ov-figure { margin-top:35px; }
+  .body-hotspot span { font-size:9px; padding:3px; }
+}
+@media(max-width:900px) {
+  .ov-priority { display:block; border:1px solid #436576; background:#102635; color:var(--ink); padding:12px 16px; margin:0 0 20px; border-radius:6px; font-size:14px; line-height:1.5; text-decoration:none; }
+  .ov-priority.is-urgent { border-color:#e38c97; background:#392735; }
+  .ov-priority strong,.ov-priority span { color:var(--watch); } .ov-priority span { display:block; margin-top:6px; }
+  .ov-grid { grid-template-columns:1fr 1fr; gap:25px; }
+  .ov-plan { grid-column:1/-1; }
+  .ov-figure { max-width:310px; margin:0 auto; }
+  #ovThree { min-height:600px; } #ovThree .twinstage { height:600px; }
+  .overview-ready .top { align-items:flex-start; }
+  .overview-ready .toppills { justify-content:flex-start; }
+  #ovActions { display:grid; grid-template-columns:1fr 1fr; gap:0 25px; }
+  #ovActions .ov-first { grid-column:1/-1; }
+}
+@media(max-width:600px) {
+  body.overview-ready { padding:18px 16px 32px; }
+  .overview-ready .top h1 { font-size:23px; letter-spacing:.035em; }
+  .overview-ready .top .mission { font-size:10px; }
+  .overview-ready .toppills { gap:7px; } .overview-ready .pill,.overview-ready .badge { font-size:9px; padding:7px 9px; }
+  .ov-toolbar { flex-wrap:wrap; gap:8px; }
+  .ov-day { width:100%; } .ov-day select { flex:1; width:0; min-width:0; font-size:11px; }
+  .ov-tools { width:100%; justify-content:flex-end; }
+  .ov-grid { display:flex; flex-direction:column; gap:26px; }
+  .ov-left,.ov-body,.ov-plan { width:100%; }
+  .ov-left .tile { grid-template-columns:1fr 1.15fr auto; padding:10px 5px; }
+  .ov-left .tile .name { font-size:12px; } .ov-left .tile .val { font-size:16px; } .ov-left .tile .chip { font-size:10px; }
+  #ovValue { font-size:44px; }
+  #ovCompare > div { grid-template-columns:100px 1fr; }
+  #ovCompare dd { display:flex; } #ovCompare dd small { max-width:45%; }
+  .ov-figure { max-width:280px; margin:0 auto; }
+  .body-hotspot span { font-size:10px; }
+  #ovActions { display:block; } #ovActions p { font-size:16px; }
+  .ov-disclosure { flex-direction:column; gap:10px; } .ov-disclosure a { align-self:flex-start; }
+  #ovThree { min-height:560px; } #ovThree .twinstage { height:560px; }
+}

@@ -9,9 +9,11 @@ It shows how a crew member far from Earth could judge their own health readings 
 ## What is in it
 
 - **Today: how you are doing.** One headline, each reading at a glance (high, low, up, down, expected, OK, no reading), and notes on what changed in the last 7 days.
-- **What to do now.** An ordered plan: re-check, tell the crew medical officer, hold a task, protect sleep. Each step says whether it is the team's own example or rests on a named source.
+- **Body-centred overview.** The first screen puts the six readings and selected comparison on the left, the body in the centre, and the ordered plan on the right. A fresh load opens simulated flight day 92. The other sample days and typed readings remain available.
+- **What to do now.** Steps appear soonest first. On day 92, telling the crew medical officer now comes before holding exercise and re-checking. Each step says whether it is the team's own example or rests on a named source; the full evidence is available below the overview.
 - A symptom box that overrides the readings.
-- A 3D body twin with clickable regions, built in code from simple shapes with three.js. A flat figure shows if 3D cannot start, and the same regions are also a plain list.
+- A body illustration made with OpenAI image generation, with live, keyboard-accessible region buttons. The picture has no baked-in status markers; the controls show the current assessment.
+- An optional **Rotate in 3D** view with a smooth, generic CC0 human mesh and four selectable regions, rendered with the local three.js library. Drag to rotate. The illustration and region list remain available without WebGL, and a flat figure is retained as a fallback.
 - Six readings: blood pressure, heart rate, core temperature, sleep, blood sugar and mood.
 - Five sample days for one made-up crew member, including a fever on top of the space shift and a dead sensor.
 - A form to type in your own readings and your own baseline. They stay in your browser.
@@ -19,8 +21,15 @@ It shows how a crew member far from Earth could judge their own health readings 
 - A readings check before a task. It never says anyone is fit or cleared.
 - A look-ahead: arithmetic on published averages, not a simulation of a body.
 - Daily habits taken from NASA's own pages, with tick boxes.
+- An environment read automatically from the simulated mission plan, with a manual correction. It changes the evidence context and report, not the clinical rules.
+- Measurement prompts derived from the action plan, with automatic re-check reminders. The labelled demonstration runs one mission minute per second while the page is open.
+- Check streaks and badges that reward logging readings and habits, not getting a particular health result.
+- Measurement information and a treatment section that groups the existing plan by what the crew member can do and what goes to the medical officer. It adds no medicine advice.
+- An optional local photo preview. The photo stays in the tab; its filename is listed in the report, but the image is not analysed or sent.
 - A report for Earth that says everything in one go, because a reply can take up to 20 minutes one way.
 - NASA's five hazards of human spaceflight, with links to NASA's pages.
+
+The lower health toolkit retains the full reading details, source links, action evidence, task checks, forecast, habits, prompts, environment, photo and report controls. The overview is a display layer over the existing assessments and actions; the body illustration and mesh do not infer measurements or make health decisions.
 
 ## What is ours and what is not
 
@@ -30,9 +39,19 @@ The reference numbers come from the sources below. The summary wording, the patt
 
 Open `index.html` in a browser. There is no build step, no server and no login.
 
+All scripts and visual assets are local. A static HTTP preview also works; no backend or runtime API is required. Direct-file launch has not been rechecked in this visual-update pass.
+
 To run the logic tests (Node 18 or newer):
 
-    node --test tests/logic.test.js
+    node --test tests/logic.test.js tests/extras.test.js
+
+The latest local run on 15 Nov 2026 passed all 69 tests. These check the prototype's logic and extras; they do not establish clinical validity or replace browser interaction checks.
+
+## Body assets
+
+The default `assets/body-neutral.png` is an AI-generated illustration. The optional 3D view uses static geometry from Innerscene's male base mesh, adapted from MakeHuman CC0 assets. It is a generic model, not a reconstruction of the sample crew member. The geometry is stored in `vendor/human-mesh-data.js`; its rig and textures are not used. The renderer adds the material, region markers and drag interaction.
+
+Source, licence, transformation details and image provenance are recorded in [assets/PROVENANCE.md](assets/PROVENANCE.md). three.js r160 remains bundled under the MIT licence in `vendor/three-LICENSE.txt`.
 
 ## Sources
 
@@ -66,6 +85,7 @@ Other sources:
 - Canadian Space Agency, Bio-Monitor: https://www.asc-csa.gc.ca/eng/sciences/bio-monitor.asp
 - Axiom Space release, 26 Sep 2025: https://axiomspace.com/release/suite-ride-research-unlocks-potential-for-first-astronaut-with-diabetes
 - three.js r160, the library that draws the 3D figure (MIT licence, copy in `vendor/`): https://github.com/mrdoob/three.js
+- Innerscene male base mesh, adapted from MakeHuman CC0 assets, used for the optional rotating body: https://www.innerscene.com/tools/library/3d-parts/male-base-mesh-3d-person-rigged-a-pose-380e6d89
 
 ## Related NASA work
 
@@ -79,4 +99,4 @@ That work covers decision support for the medical officer and for non-expert cre
 
 ## Use of AI
 
-This prototype was built with help from Claude (Anthropic). Claude helped brainstorm, research sources, write the code and tests, and review them. The team chose the idea and owns the rules.
+This prototype was built with help from Claude (Anthropic) and Codex (OpenAI). Claude helped brainstorm, research sources, write the original prototype and tests, review them, and add the environment, measurement-reminder and other toolkit features. Codex helped create and review visual alternatives, implement the entrant-selected body-centred overview, integrate the optional rotating human mesh, and check that existing controls and rules remained connected. OpenAI's built-in image generation made the visual mockups and the body illustration; the page visibly credits the illustration. The team chose the idea and the visual direction, and owns the example rules.

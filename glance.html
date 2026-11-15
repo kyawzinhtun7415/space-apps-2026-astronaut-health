@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astronaut Health Twin: glance view (concept prototype)</title>
+<style>
+  :root { --bg: #0b1622; --card: #12202f; --ink: #eaf5fc; --muted: #9dbbd0; --line: #24384d; --accent: #5ae2ff;
+    --ok: #72e6ac; --ok-bg: rgba(64, 200, 140, .15); --watch: #ffbc5c; --watch-bg: rgba(255, 176, 76, .16);
+    --serious: #ff97a3; --serious-bg: rgba(255, 92, 112, .18); --cannot: #bdcad8; --cannot-bg: rgba(160, 180, 200, .13);
+    --expected: #9ccaff; --expected-bg: rgba(96, 156, 255, .16); --changed: #f5d680; --changed-bg: rgba(240, 200, 90, .14); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 60rem; margin: 0 auto; padding: 1rem; }
+  h1 { font-size: 1.25rem; margin: .2rem 0; }
+  h2 { font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 .5rem; }
+  p { margin: .4rem 0; }
+  a { color: var(--accent); }
+  .note { color: var(--muted); font-size: .9rem; }
+  .bar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin: .8rem 0 1.2rem; }
+  select { font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: .4rem .6rem; max-width: 100%; }
+  .devices { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start; }
+  .wrist { width: 15rem; border: 6px solid #1d2f42; border-radius: 2.2rem; background: #060d15; padding: 1rem .9rem; }
+  .phone { width: 20rem; max-width: 100%; border: 6px solid #1d2f42; border-radius: 1.6rem; background: #060d15; padding: 1rem; }
+  .state { display: inline-block; font-weight: 700; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: .15rem .6rem; border: 1px solid currentColor; }
+  .s-ok { color: var(--ok); background: var(--ok-bg); } .s-watch { color: var(--watch); background: var(--watch-bg); }
+  .s-serious { color: var(--serious); background: var(--serious-bg); } .s-cannot { color: var(--cannot); background: var(--cannot-bg); }
+  .s-expected { color: var(--expected); background: var(--expected-bg); } .s-changed { color: var(--changed); background: var(--changed-bg); }
+  .head { font-weight: 700; margin: .5rem 0 .3rem; }
+  .do { border-left: 3px solid var(--accent); padding-left: .6rem; margin: .5rem 0; }
+  .do b { color: var(--accent); }
+  .next { color: var(--muted); font-size: .9rem; }
+  .chips { list-style: none; padding: 0; margin: .7rem 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+  .chips li { border: 1px solid var(--line); border-radius: 10px; padding: .35rem .5rem; font-size: .85rem; display: flex; justify-content: space-between; gap: .4rem; background: transparent; }
+  .chips li span:last-child { font-weight: 700; }
+  .open { display: inline-block; margin-top: .8rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Astronaut Health Twin: glance view</h1>
+  <p class="note">Concept prototype, simulated sample data, not a medical device. The same rules as the full view, shown in three lines: how you are doing, the first thing to do, and the next check.</p>
+  <div class="bar"><label for="day">Sample day</label> <select id="day"></select> <a href="index.html">Open the full view</a></div>
+  <div class="devices">
+    <section aria-labelledby="wH">
+      <h2 id="wH">On a wrist</h2>
+      <div class="wrist" id="wrist" aria-live="polite"></div>
+    </section>
+    <section aria-labelledby="pH">
+      <h2 id="pH">On a phone or tablet</h2>
+      <div class="phone" id="phone" aria-live="polite"></div>
+    </section>
+  </div>
+  <p class="note">Why small: on the space station crews use tablets every day (NASA, 2018), and NASA's own decision support project pictures a laptop or a handheld device. A suited astronaut today has no display in the helmet, so this view is for inside the cabin.</p>
+</main>
+<script src="js/sample-days.js"></script>
+<script src="js/ranges.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/assess.js"></script>
+<script src="js/hazards.js"></script>
+<script src="js/insights.js"></script>
+<script src="js/actions.js"></script>
+<script src="js/extras.js"></script>
+<script>
+(function () {
+  var S = window.SAMPLE, R = window.RANGES, U = window.RULES, X = window.EXTRAS;
+  var KEYS = ["bp", "hr", "temp", "sleep", "glucose", "mood"];
+  var WORD = { ok: "All clear", watch: "Needs attention", serious: "Act now", cannot: "Cannot assess", expected: "Expected in space", changed: "Changed" };
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  var sel = $("day");
+  sel.innerHTML = S.days.map(function (d, i) { return '<option value="' + i + '">' + esc(d.label) + '</option>'; }).join("");
+  sel.value = "3";
+  function draw() {
+    var d = S.days[+sel.value];
+    var res = window.ASSESS.assessAll(KEYS, d.r, S.baseline, d.day, R, U);
+    var sum = window.INSIGHTS.summary(KEYS, res, R);
+    var notes = window.INSIGHTS.notes(KEYS, d, res, S.baseline, R, U, window.SOURCES);
+    var steps = window.ACTIONS.plan(KEYS, res, { RANGES: R, RULES: U, SOURCES: window.SOURCES, flags: [], notes: notes });
+    var g = X.glance(sum, steps, X.prompts(KEYS, res, steps, R, U), R);
+    var core = '<span class="state s-' + g.level + '">' + WORD[g.level] + '</span>' +
+      '<p class="head">' + esc(g.headline) + '</p>' +
+      '<p class="do"><b>' + esc(g.when) + ':</b> ' + esc(g.first) + '</p>' +
+      '<p class="next">Next check. ' + esc(g.next) + '</p>';
+    $("wrist").innerHTML = core;
+    $("phone").innerHTML = core + '<ul class="chips">' + sum.chips.map(function (c) {
+      return '<li class="s-' + c.status + '"><span>' + esc(c.label) + '</span><span>' + esc(c.state) + '</span></li>';
+    }).join("") + '</ul><a class="open" href="index.html">See why, and the full plan</a>';
+  }
+  sel.addEventListener("change", draw);
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -211,6 +211,8 @@
     renderHazard();
     renderHabits(day, hold);
     $("report").value = ACTIONS.report(KEYS, res, day, sum, steps, ctx);
+    // Display-only extras (places, prompts, streak, how-to, treatment split). They read the plan above and decide nothing.
+    if (window.EXTRAS_UI) window.EXTRAS_UI.render({ keys: KEYS, key: state.key, day: day, res: res, steps: steps });
     if (refocus) { var el = document.querySelector(refocus); if (el && el !== document.activeElement) el.focus(); }
   }
 
