@@ -1,0 +1,8 @@
+#!/bin/sh
+# Stops private notes or personal details from reaching the public repository.
+bad_paths=$(git diff --cached --name-only | grep -E '^(guides|resources|research|submission)/' || true)
+if [ -n "$bad_paths" ]; then echo "Blocked: these paths must not be published:"; echo "$bad_paths"; exit 1; fi
+if git diff --cached -U0 -- . ':(exclude).githooks' | grep -E '^\+' | grep -E -i '/Users/|@gmail\.com|@outlook\.|@icloud\.' >/dev/null; then
+  echo "Blocked: staged text contains a home folder path or a personal email address."; exit 1
+fi
+exit 0

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crew Health Self-Check (concept prototype)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Crew Health Self-Check</h1>
+    <p class="sub">Is this reading normal for space, for me, today?</p>
+  </div>
+  <span class="badge" role="note">Simulated sample data</span>
+</header>
+
+<section class="intro" aria-label="About this prototype">
+  <p>This prototype shows how a crew member far from Earth could judge a health reading alone. Pick a sample day, or enter your own readings. Each reading is compared with your own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then it says what to do and who to tell.</p>
+  <p id="missionNote" class="hint"></p>
+  <details class="gloss">
+    <summary>Words used on this page</summary>
+    <dl>
+      <dt>Pre-launch baseline</dt><dd>Your own numbers, measured on Earth before the mission.</dd>
+      <dt>Space shift</dt><dd>A change that a study measured in crews during flight. It is an average for a small group.</dd>
+      <dt>Clinical chart</dt><dd>A published table of normal and abnormal values that clinicians use on Earth.</dd>
+      <dt>NEWS2</dt><dd>A UK hospital chart that gives each vital sign a score from 0 to 3. Higher means further from normal.</dd>
+      <dt>mmHg</dt><dd>The unit for blood pressure. The top number is the pressure when the heart beats, the bottom number when it rests.</dd>
+      <dt>mg/dL</dt><dd>The unit for blood sugar used here.</dd>
+      <dt>Core temperature</dt><dd>The temperature inside the body, not at the skin.</dd>
+    </dl>
+  </details>
+</section>
+
+<section class="days" aria-label="Sample day">
+  <label for="day">Sample day</label>
+  <select id="day"></select>
+  <p id="dayNote" class="daynote"></p>
+  <form id="mine" class="mine" hidden>
+    <p class="hint">Type your own readings. Leave a box empty if you have no reading. They stay in this browser and are sent nowhere.</p>
+    <div class="minegrid">
+      <label>Flight day <input name="day" type="number" min="0" max="1000" step="1" inputmode="numeric"></label>
+      <label>Blood pressure, top (mmHg) <input name="sys" type="number" min="50" max="260" step="1" inputmode="numeric"></label>
+      <label>Blood pressure, bottom (mmHg) <input name="dia" type="number" min="30" max="160" step="1" inputmode="numeric"></label>
+      <label>Heart rate (bpm) <input name="hr" type="number" min="20" max="220" step="1" inputmode="numeric"></label>
+      <label>Core temperature (°C) <input name="temp" type="number" min="30" max="43" step="0.1" inputmode="decimal"></label>
+      <label>Sleep last night (h) <input name="sleep" type="number" min="0" max="16" step="0.1" inputmode="decimal"></label>
+      <label>Blood sugar, morning (mg/dL) <input name="glucose" type="number" min="20" max="500" step="1" inputmode="numeric"></label>
+      <label>Mood, 1 low to 5 good <input name="mood" type="number" min="1" max="5" step="1" inputmode="numeric"></label>
+    </div>
+    <details>
+      <summary>My pre-launch baseline</summary>
+      <div class="minegrid">
+        <label>Top (mmHg) <input name="b_sys" type="number" min="50" max="260" step="1"></label>
+        <label>Bottom (mmHg) <input name="b_dia" type="number" min="30" max="160" step="1"></label>
+        <label>Heart rate (bpm) <input name="b_hr" type="number" min="20" max="220" step="1"></label>
+        <label>Core temperature (°C) <input name="b_temp" type="number" min="30" max="43" step="0.1"></label>
+        <label>Sleep (h) <input name="b_sleep" type="number" min="0" max="16" step="0.1"></label>
+        <label>Blood sugar (mg/dL) <input name="b_glucose" type="number" min="20" max="500" step="1"></label>
+        <label>Mood, 1 to 5 <input name="b_mood" type="number" min="1" max="5" step="1"></label>
+      </div>
+    </details>
+  </form>
+</section>
+
+<main class="grid">
+  <section class="figure-card" aria-label="Body figure">
+    <h2>Your body</h2>
+    <p class="hint">Click a body part, or use the list below it.</p>
+    <svg id="figure" viewBox="0 0 220 420" role="group" aria-label="Body figure with four clickable regions">
+      <g class="limbs">
+        <rect x="150" y="96" width="26" height="150" rx="13"/>
+        <rect x="72" y="250" width="34" height="160" rx="16"/>
+        <rect x="114" y="250" width="34" height="160" rx="16"/>
+      </g>
+      <g class="region" data-region="head" tabindex="0" role="button" aria-label="Head: sleep and mood">
+        <circle cx="110" cy="46" r="34"/>
+        <text x="110" y="51">Head</text>
+      </g>
+      <g class="region" data-region="chest" tabindex="0" role="button" aria-label="Heart: blood pressure and heart rate">
+        <rect x="68" y="90" width="84" height="76" rx="18"/>
+        <text x="110" y="133">Heart</text>
+      </g>
+      <g class="region" data-region="core" tabindex="0" role="button" aria-label="Core: body temperature">
+        <rect x="68" y="170" width="84" height="80" rx="18"/>
+        <text x="110" y="215">Core</text>
+      </g>
+      <g class="region" data-region="arm" tabindex="0" role="button" aria-label="Arm: blood sugar">
+        <rect x="44" y="96" width="26" height="150" rx="13"/>
+        <text x="57" y="175" transform="rotate(-90 57 175)">Arm</text>
+      </g>
+    </svg>
+    <ul id="regionList" class="regionlist" aria-label="Body regions"></ul>
+    <h3 class="small-h">Not measured in this prototype</h3>
+    <ul id="notMeasured" class="notmeasured"></ul>
+  </section>
+
+  <section class="readings" aria-label="Readings">
+    <h2>Today's readings</h2>
+    <div id="tiles" class="tiles"></div>
+    <article id="panel" class="panel"></article>
+  </section>
+</main>
+
+<section class="card" aria-label="Readings check for today's task">
+  <h2>Readings check for today's task</h2>
+  <p class="hint">An example check by this team. It looks only at the readings above and never says anyone is fit or cleared.</p>
+  <div id="taskBtns" class="btnrow" role="group" aria-label="Task"></div>
+  <fieldset class="flags">
+    <legend>Any of these right now? (example list by this team)</legend>
+    <div id="flagBoxes" class="flagboxes"></div>
+  </fieldset>
+  <div id="taskOut" class="taskout" aria-live="polite"></div>
+</section>
+
+<section class="card" aria-label="Looking ahead">
+  <h2>Looking ahead</h2>
+  <p class="forecast-label"><strong>Forecast:</strong> arithmetic on published averages and your own recent readings. Not a simulation of your body.</p>
+  <label for="fday">Flight day <output id="fdayOut"></output></label>
+  <input id="fday" type="range" min="0" step="10">
+  <div id="forecast" class="fgrid"></div>
+</section>
+
+<section class="card" aria-label="NASA's five hazards">
+  <h2>NASA's five hazards of human spaceflight</h2>
+  <p class="hint">Pick a hazard to see which readings it sits behind.</p>
+  <div id="hazBtns" class="btnrow" role="group" aria-label="Hazard"></div>
+  <div id="hazOut" class="hazout" aria-live="polite"></div>
+</section>
+
+<section class="legend" aria-label="What the labels mean">
+  <h2>What the labels mean</h2>
+  <ul id="legend"></ul>
+</section>
+
+<footer>
+  <p class="disclaimer"><strong>Concept prototype with simulated data. It does not detect disease or clear anyone for a task. Not a medical device.</strong></p>
+  <p>The "what to do and who to tell" lines, the task check, the symptom list and the cut-offs behind them are examples by this team. They are not NASA's rules. Score bands are quoted from the NEWS2 chart of the Royal College of Physicians. This tool does not reproduce that chart or calculate a NEWS2 total, and NEWS2 was designed for hospital patients, so it is a rough guide here. The tolerances behind "expected in space" and the act-now lines for pulse and low blood sugar are this team's own.</p>
+  <h2>Sources</h2>
+  <ul id="sources" class="sources"></ul>
+  <p class="ai">AI assistance: this prototype was built with help from Claude (Anthropic).</p>
+</footer>
+
+<script src="js/sample-days.js"></script>
+<script src="js/ranges.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/assess.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/forecast.js"></script>
+<script src="js/hazards.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
