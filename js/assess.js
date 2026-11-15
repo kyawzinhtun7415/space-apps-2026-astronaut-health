@@ -31,6 +31,11 @@
       out.why = "Below this team's own act-now line of " + t.glucoseBelow + " mg/dL. That line is the team's example. Below 70 is low on the American Diabetes Association page.";
       return out;
     }
+    if (key === "mood" && RULES.moodAttentionAtOrBelow !== null && RULES.moodAttentionAtOrBelow !== undefined && v <= RULES.moodAttentionAtOrBelow) {
+      out.status = "watch"; out.clinical = "watch"; out.teamRule = true; out.dir = "low";
+      out.why = "At the bottom of this team's own 1 to 5 mood scale. That line is the team's example. Mood has no clinical chart here.";
+      return out;
+    }
     if (clin.level !== "ok") { out.status = clin.level; return out; }
     if (!hasBase) { out.status = "nobase"; return out; }
     // "Expected in space" needs a real shift for this flight day, a change in the same direction, and a close match.
@@ -42,7 +47,7 @@
     return out;
   }
   function assessAll(keys, r, baseline, day, RANGES, RULES) {
-    var res = {}; keys.forEach(function (k) { res[k] = assess(k, r, baseline, day, RANGES, RULES); }); return res;
+    var res = {}; keys.forEach(function (k) { res[k] = assess(k, r, baseline, day, RANGES, RULES); res[k].key = k; }); return res;
   }
   root.ASSESS = { val: val, delta: delta, expectedShift: expectedShift, assess: assess, assessAll: assessAll };
 })(typeof window !== "undefined" ? window : globalThis);

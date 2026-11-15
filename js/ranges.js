@@ -25,7 +25,7 @@
   root.SOURCES = S;
   root.RANGES = {
     bp: {
-      label: "Blood pressure", short: "Pressure", sensor: "shirt sensor", unit: "mmHg", region: "chest", hazard: "gravity",
+      label: "Blood pressure", short: "Pressure", normalShort: "normal is below 120 over 80", sensor: "shirt sensor", unit: "mmHg", region: "chest", hazard: "gravity",
       feed: "Simulated shirt sensor feed, one value at a time.",
       inSpace: "Yes. The Canadian Bio-Monitor shirt on the space station records blood pressure and pulse.", inSpaceSource: S.biomon,
       clinicalText: "Normal is less than 120 and less than 80. 130 to 139 or 80 to 89 is stage 1 high. Higher than 180 and higher than 120 is a crisis on the NIH table. On the NEWS2 chart a top number of 111 to 219 scores 0, 101 to 110 scores 1, 91 to 100 scores 2, and 90 or less, or 220 or more, scores 3." + NEWS_NOTE,
@@ -43,7 +43,7 @@
         study: "8 men aged 45 to 53, one 24-hour arm cuff recording each, between flight day 85 and 192. An average for a small group, not a rule for one reading. Before day 85 there is no measurement to compare with.", source: S.norsk }
     },
     hr: {
-      label: "Heart rate", short: "Pulse", sensor: "shirt sensor", unit: "bpm", region: "chest", hazard: "gravity",
+      label: "Heart rate", short: "Pulse", normalShort: "normal at rest is 60 to 100", sensor: "shirt sensor", unit: "bpm", region: "chest", hazard: "gravity",
       feed: "Simulated shirt sensor feed.",
       inSpace: "Yes. The Canadian Bio-Monitor shirt on the space station records pulse.", inSpaceSource: S.biomon,
       clinicalText: "For adults a normal pulse at rest is 60 to 100 beats per minute.",
@@ -57,7 +57,7 @@
         study: "Same study: 8 men, 24-hour recordings.", source: S.norsk }
     },
     temp: {
-      label: "Body temperature (core)", short: "Temp", sensor: "forehead sensor", unit: "°C", region: "core", hazard: "closed",
+      label: "Body temperature (core)", short: "Temp", normalShort: "the chart's normal band is 36.1 to 38.0", sensor: "forehead sensor", unit: "°C", region: "core", hazard: "closed",
       feed: "Simulated forehead sensor check. Skin temperature from a shirt is a different measurement and gets no shift.",
       inSpace: "Yes. The study behind the space shift estimated core temperature in flight with a forehead heat-flux sensor.", inSpaceSource: S.stahn,
       clinicalText: "On the NEWS2 chart 36.1 to 38.0 scores 0, 35.1 to 36.0 and 38.1 to 39.0 score 1, 39.1 or more scores 2, and 35.0 or less scores 3." + NEWS_NOTE,
@@ -73,7 +73,7 @@
         study: "11 astronauts. Core temperature was estimated with a forehead heat-flux sensor. It rose higher and faster in exercise, so the shift is a strain, not a comfort. This tool assumes a straight-line build-up to day 75; the study only says gradual.", source: S.stahn }
     },
     sleep: {
-      label: "Sleep last night", short: "Sleep", sensor: "wrist sensor", unit: "h", region: "head", hazard: "isolation",
+      label: "Sleep last night", short: "Sleep", normalShort: "adults need 7 or more", sensor: "wrist sensor", unit: "h", region: "head", hazard: "isolation",
       feed: "Simulated wrist sensor.",
       inSpace: "Yes. NASA's ARCHeR study collects sleep and activity with a wrist sensor during Artemis missions.", inSpaceSource: S.archer,
       clinicalText: "Adults aged 18 to 60 need 7 or more hours a night.",
@@ -83,7 +83,7 @@
         study: "NASA technical brief.", source: S.tb041 }
     },
     glucose: {
-      label: "Blood sugar (morning, before food)", short: "Sugar", sensor: "arm sensor", unit: "mg/dL", region: "arm", hazard: "distance",
+      label: "Blood sugar (morning, before food)", short: "Sugar", normalShort: "fasting normal is 70 to 99", sensor: "arm sensor", unit: "mg/dL", region: "arm", hazard: "distance",
       feed: "Simulated arm sensor. The morning value before food is used, because the reference range is a fasting one.",
       inSpace: "Being tested. Continuous glucose monitors were tested on the space station in 2025.", inSpaceSource: S.axiom,
       clinicalText: "Fasting normal is less than 100 mg/dL. Low is below 70 mg/dL.",
@@ -96,7 +96,7 @@
       space: { shift: null, text: "No measured space shift found.", study: "", source: null }
     },
     mood: {
-      label: "Mood (one tap, 1 to 5)", short: "Mood", sensor: "mood tap", unit: "/ 5", region: "head", hazard: "isolation",
+      label: "Mood (one tap, 1 to 5)", short: "Mood", normalShort: "", sensor: "mood tap", unit: "/ 5", region: "head", hazard: "isolation",
       feed: "One tap by the crew member. No automatic mood sensor was found.",
       inSpace: "Yes, by self-report. NASA's ARCHeR study uses behavioral surveys.", inSpaceSource: S.archer,
       clinicalText: "No reference shown. This one-tap scale is the team's own and has no clinical range.",

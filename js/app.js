@@ -49,11 +49,14 @@
   function show(key, v) {
     if (v === null || v === undefined) return "No valid reading";
     if (key === "bp") return v.sys + " / " + v.dia + " mmHg";
-    return ((key === "temp" || key === "sleep") ? v.toFixed(1) : v) + " " + RANGES[key].unit;
+    if (key === "sleep") return ACTIONS.hours(v) + " " + RANGES[key].unit; // never rounds 6.99 up to 7.0
+    return (key === "temp" ? v.toFixed(1) : v) + " " + RANGES[key].unit;
   }
   function signed(n) { return (n > 0 ? "+" : "") + n; }
   function word(a) {
     var s = a.status;
+    if (s === "watch" && a.key === "mood") return "Low: talk to someone (team line)";
+    if (s === "watch" && a.key === "sleep") return "Low: under 7 hours";
     if (s === "watch" || s === "serious") return (a.dir === "low" ? "Low" : "High") + (s === "serious" ? ": act now" : ": re-check") + (a.teamRule ? " (team line)" : "");
     if (s === "changed") return (a.dir === "down" ? "Down" : "Up") + " from your baseline";
     return STATUS[s].word;
@@ -82,6 +85,7 @@
   function verdict(k, a, cfg, day) {
     var unit = k === "bp" ? " mmHg on the top number" : " " + cfg.unit;
     if (a.status === "cannot") return "There is no valid reading today, so nothing can be said about it.";
+    if (k === "mood" && a.status === "watch") return "Mood is at the bottom of this team's 1 to 5 scale. There is no clinical chart for mood here, so this line is the team's own.";
     if (a.status === "watch" || a.status === "serious") {
       var side = k === "sleep" ? "below the recommended amount" : (a.dir === "low" ? "below the normal range" : "above the normal range");
       return "This reading is " + side + "." + (a.status === "serious" ? " It needs action now." : " It needs a re-check.");
@@ -110,10 +114,13 @@
     var steps = ACTIONS.plan(KEYS, res, ctx);
     $("dayNote").textContent = day.note + (day.custom ? "" : " (" + SAMPLE.person + ".)");
     $("mine").hidden = !day.custom;
-    $("badge").textContent = day.custom ? "Typed by you, not a sensor" : "Simulated sample data";
+    $("badge").textContent = "Concept prototype · " + (day.custom ? "typed by you, not a sensor" : "simulated sample data");
 
     // Today: how you are doing
-    var lvl = state.flags.length ? "serious" : sum.level;
+    var first = steps[0], hold = steps.some(function (x) { return x.id === "hold"; });
+    $("sumFirst").hidden = first.when !== "Now";
+    $("sumFirst").textContent = first.when === "Now" ? "First step, now: " + first.text : "";
+    var lvl = state.flags.length || first.id === "tellnow" ? "serious" : sum.level;
     var head = state.flags.length ? "You ticked a symptom. Tell the crew medical officer now." : sum.headline + ".";
     setHTML("sumHead", '<span class="sumicon s-' + (STATUS[lvl].cls || lvl) + '" aria-hidden="true">' + STATUS[lvl].icon + '</span> ' + esc(head));
     $("sumHead").className = "sumhead s-" + (STATUS[lvl].cls || lvl);
@@ -129,12 +136,15 @@
     }).join("") : '<li class="n-info">' + (day.trend ? "Nothing stood out in the last 7 days." : "Typed-in readings have no history yet, so there is nothing to compare over time.") + '</li>');
 
     // What to do now
-    setHTML("steps", steps.map(function (s) {
+    function stepHTML(s) {
       var basis = (s.basis || []).map(link).join("; ");
       return '<li class="step l-' + s.level + '"><span class="when">' + s.when + '</span><span class="what">' + esc(s.text) + '</span>' +
         '<span class="whyline">' + esc(s.why) + '</span>' +
         '<span class="basis">' + (s.team ? "This team's example step." : "") + (basis ? (s.team ? " Rests on: " : "Source: ") + basis + "." : "") + '</span></li>';
-    }).join(""));
+    }
+    var SHOWN = 4, top = steps.slice(0, SHOWN), more = steps.slice(SHOWN);
+    setHTML("steps", '<ol class="steps">' + top.map(stepHTML).join("") + '</ol>' +
+      (more.length ? '<details class="moresteps"><summary>' + more.length + (more.length === 1 ? " more step" : " more steps") + ' for later today</summary><ol class="steps" start="' + (SHOWN + 1) + '" style="counter-reset: step ' + SHOWN + '">' + more.map(stepHTML).join("") + '</ol></details>' : ""));
 
     // Tiles
     setHTML("tiles", KEYS.map(function (k) {
@@ -195,7 +205,7 @@
     renderTask(res);
     renderForecast(day);
     renderHazard();
-    renderHabits(day);
+    renderHabits(day, hold);
     $("report").value = ACTIONS.report(KEYS, res, day, sum, steps, ctx);
     if (refocus) { var el = document.querySelector(refocus); if (el && el !== document.activeElement) el.focus(); }
   }
@@ -245,12 +255,17 @@
         : (h.note || "No reading in this prototype is linked to this hazard.")) + '</p>');
   }
 
-  function renderHabits(day) {
+  var holdNow = false;
+  function renderHabits(day, hold) {
+    if (hold !== undefined) holdNow = hold;
     var mineDone = done[day.id] || [];
     setHTML("habits", HABITS.map(function (h) {
-      return '<li><label><input type="checkbox" data-habit="' + h.id + '"' + (mineDone.indexOf(h.id) !== -1 ? " checked" : "") + '> <span><strong>' + h.text + '</strong><br><span class="src">' + h.why + ' ' + link(h.source) + '</span></span></label></li>';
+      var held = holdNow && h.id === "exercise";
+      return '<li><label' + (held ? ' class="held"' : '') + '><input type="checkbox" data-habit="' + h.id + '"' + (mineDone.indexOf(h.id) !== -1 && !held ? " checked" : "") + (held ? " disabled" : "") + '> <span><strong>' + h.text + '</strong>' +
+        (held ? ' <span class="heldtag">On hold today. See the plan above.</span>' : '') + '<br><span class="src">' + h.why + ' ' + link(h.source) + '</span></span></label></li>';
     }).join(""));
-    $("habitCount").textContent = mineDone.length + " of " + HABITS.length + " done today.";
+    var n = mineDone.filter(function (id) { return !(holdNow && id === "exercise"); }).length;
+    $("habitCount").textContent = n + " of " + (HABITS.length - (holdNow ? 1 : 0)) + " done today." + (holdNow ? " Exercise is on hold." : "");
   }
 
   function pickRegion(reg) {

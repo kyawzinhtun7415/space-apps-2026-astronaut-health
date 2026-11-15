@@ -4,6 +4,9 @@
   var FLAG = { watch: 1, serious: 1 };
   function num(key, v) { return v === null || v === undefined ? null : (key === "bp" ? v.sys : v); }
   function fmt(key, n, RANGES) { return (key === "temp" || key === "sleep" ? n.toFixed(1) : String(Math.round(n))) + " " + (key === "bp" ? "mmHg" : RANGES[key].unit); }
+  function nm(RANGES, k) { return RANGES[k].label.replace(/ \(.*\)/, "").replace(" last night", "").toLowerCase(); }
+  // A rise in core temperature that the space shift does not explain needs attention, even though no chart flags it yet.
+  function tempUp(k, a) { return k === "temp" && a.status === "changed" && a.dir === "up"; }
   function plural(n, one, many) { return n + " " + (n === 1 ? one : many); }
   function list(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
 
@@ -13,25 +16,30 @@
     if (a.status === "serious" || a.status === "watch") return a.dir === "low" ? "LOW" : "HIGH";
     if (a.status === "changed") return a.dir === "down" ? "DOWN" : "UP";
     if (a.status === "expected") return "EXPECTED";
+    if (a.status === "nobase") return "IN RANGE";
     return "OK";
   }
 
   function summary(keys, res, RANGES) {
-    var c = { serious: [], watch: [], cannot: [], changed: [], expected: [], ok: [] };
+    var c = { serious: [], watch: [], cannot: [], changed: [], expected: [], nobase: [], ok: [] };
     keys.forEach(function (k) { var s = res[k].status; (c[s] || c.ok).push(k); });
-    var flagged = c.serious.length + c.watch.length, level, headline;
-    if (c.serious.length) { level = "serious"; headline = plural(c.serious.length, "reading needs", "readings need") + " action now"; }
-    else if (c.watch.length) { level = "watch"; headline = plural(c.watch.length, "reading needs", "readings need") + " attention"; }
+    var att = keys.filter(function (k) { return FLAG[res[k].status] || tempUp(k, res[k]); });
+    var flagged = c.serious.length + c.watch.length, level, headline, names = ": " + list(att.map(function (k) { return nm(RANGES, k); }));
+    var rest = c.changed.filter(function (k) { return att.indexOf(k) === -1; });
+    if (c.serious.length && c.serious.length === att.length) { level = "serious"; headline = plural(att.length, "reading needs", "readings need") + " action now" + names; }
+    else if (c.serious.length) { level = "serious"; headline = plural(att.length, "reading needs", "readings need") + " attention, " + c.serious.length + " of them now" + names; }
+    else if (att.length) { level = "watch"; headline = plural(att.length, "reading needs", "readings need") + " attention" + names; }
     else if (c.cannot.length) { level = "cannot"; headline = plural(c.cannot.length, "reading", "readings") + " could not be assessed"; }
-    else if (c.changed.length) { level = "changed"; headline = "Nothing flagged. " + plural(c.changed.length, "reading has", "readings have") + " moved from your baseline"; }
+    else if (rest.length) { level = "changed"; headline = "Nothing flagged. " + plural(rest.length, "reading has", "readings have") + " moved from your baseline"; }
     else if (c.expected.length) { level = "expected"; headline = "Nothing flagged. " + plural(c.expected.length, "reading shows", "readings show") + " the shift measured in space crews"; }
+    else if (c.nobase.length) { level = "ok"; headline = "Nothing flagged by the clinical charts. Enter your baseline to compare with your own normal"; }
     else { level = "ok"; headline = "Nothing flagged. Your readings are close to your baseline"; }
     var sub = [];
-    if (c.serious.length && c.watch.length) sub.push(plural(c.watch.length, "more needs", "more need") + " a re-check.");
-    if (flagged && c.changed.length) sub.push(plural(c.changed.length, "more has", "more have") + " moved from your baseline.");
-    if ((flagged || level === "changed") && c.cannot.length) sub.push(plural(c.cannot.length, "has", "have") + " no valid reading.");
+    if (att.length && rest.length) sub.push(plural(rest.length, "more has", "more have") + " moved from your baseline.");
+    if ((att.length || level === "changed") && c.cannot.length) sub.push(plural(c.cannot.length, "has", "have") + " no valid reading.");
     if (level !== "expected" && c.expected.length) sub.push(plural(c.expected.length, "shows", "show") + " the shift measured in space crews.");
-    return { level: level, headline: headline, sub: sub.join(" "), counts: c, flagged: flagged,
+    if (c.nobase.length && (att.length || c.cannot.length)) sub.push(plural(c.nobase.length, "is", "are") + " inside the normal range, with no baseline to compare.");
+    return { level: level, headline: headline, sub: sub.join(" "), counts: c, flagged: flagged, attention: att,
       chips: keys.map(function (k) { return { key: k, label: RANGES[k].short, state: state(res[k]), status: res[k].status }; }),
       caveat: "This looks at readings only. It cannot see symptoms. If you feel unwell, tell the crew medical officer." };
   }
@@ -54,7 +62,7 @@
       if (last === null) {
         for (var i = vals.length - 2; i >= 0; i--) if (num(k, vals[i]) !== null) {
           var ago = vals.length - 1 - i;
-          out.push({ kind: "info", rank: 3, text: "No valid " + name.toLowerCase() + " reading today. The last valid one was " + fmt(k, num(k, vals[i]), RANGES) + ", " + plural(ago, "day", "days") + " ago." });
+          out.push({ kind: "info", rank: 3, text: "No valid " + name.toLowerCase() + " reading today. The last valid one was " + (k === "bp" ? vals[i].sys + "/" + vals[i].dia + " mmHg" : fmt(k, num(k, vals[i]), RANGES)) + ", " + plural(ago, "day", "days") + " ago." });
           break;
         }
         return;
@@ -63,8 +71,9 @@
       var fc = RULES.fastChange[k];
       if (prev2 !== null && fc && Math.abs(last - prev2) >= fc - 1e-9) {
         var up = last > prev2, n = { kind: "warn", rank: 2, team: true, key: k,
-          text: name + (up ? " rose " : " fell ") + fmt(k, Math.abs(last - prev2), RANGES) + " in two days." };
-        if (k === "temp" && up) { n.more = "The space shift builds gradually over 2.5 months, not over days."; n.source = cfg.space.source; }
+          text: name + (k === "bp" ? " (top number)" : "") + (up ? " rose " : " fell ") + fmt(k, Math.abs(last - prev2), RANGES) + " in two days.",
+          more: "It is now " + fmt(k, last, RANGES) + (cfg.normalShort ? " (" + cfg.normalShort + ")." : ".") };
+        if (k === "temp" && up) { n.more += " The space shift builds gradually over 2.5 months, not over days."; n.source = cfg.space.source; }
         out.push(n);
       }
       // Flagged on most of the last 7 days.
@@ -84,5 +93,5 @@
     out.sort(function (a, b) { return a.rank - b.rank; });
     return out;
   }
-  root.INSIGHTS = { summary: summary, notes: notes, state: state, num: num, list: list };
+  root.INSIGHTS = { summary: summary, notes: notes, state: state, num: num, list: list, tempUp: tempUp };
 })(typeof window !== "undefined" ? window : globalThis);

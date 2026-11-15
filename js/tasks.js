@@ -8,13 +8,15 @@
         reasons: ["You ticked: " + redFlagsTicked.join(", ") + ". A symptom like this goes to the crew medical officer whatever the readings say."], notMeasured: NOT_MEASURED };
     }
     var canFlag = task.needs.filter(function (k) { return k !== "mood"; });
+    if (res.mood && res.mood.status === "watch" && task.needs.indexOf("mood") !== -1) flagged.push(RANGES.mood.label + " (at the bottom of this team's scale)");
     task.needs.forEach(function (k) {
       var a = res[k];
       if (a.status === "cannot") { missing.push(RANGES[k].label); return; }
       if (k === "sleep") {
         // Short sleep holds a task only below the team's own line; a 6 to 7 hour night is common in space.
-        if (a.v < RULES.sleepHoldBelow) flagged.push(RANGES[k].label + " (" + a.v.toFixed(1) + " h, under this team's " + RULES.sleepHoldBelow + "-hour hold line)");
-        else if (a.status === "watch") belowLine.push("Sleep is flagged (" + a.v.toFixed(1) + " h, under 7) but above this team's " + RULES.sleepHoldBelow + "-hour hold line, so it does not hold this task.");
+        var line = task.sleepHoldBelow || RULES.sleepHoldBelow, h = (Math.floor(a.v * 10 + 1e-9) / 10).toFixed(1);
+        if (a.v < line) flagged.push(RANGES[k].label + " (" + h + " h, under this team's " + line + "-hour hold line for this task)");
+        else if (a.status === "watch") belowLine.push("Sleep is flagged (" + h + " h, under 7) but above this team's " + line + "-hour hold line for this task, so it does not hold it.");
         return;
       }
       if (a.status === "watch" || a.status === "serious") flagged.push(RANGES[k].label);
@@ -29,12 +31,12 @@
     if (shiftNote) belowLine.push("Core temperature shows the shift measured in space crews. It rises higher and faster in exercise, so stop if you feel overheated.");
     if (missing.length) reasons.push("No valid reading: " + missing.join(", ") + ".");
     reasons = reasons.concat(belowLine);
-    if (task.needs.indexOf("mood") !== -1) reasons.push("Mood has no clinical range, so it cannot flag here.");
+    if (task.needs.indexOf("mood") !== -1 && !(res.mood && res.mood.status === "watch")) reasons.push("Mood has no clinical range. It only counts here at the very bottom of this team's scale.");
     if (flagged.length || warm) return { answer: "hold", word: "Hold and re-check", reasons: reasons, notMeasured: NOT_MEASURED };
     if (missing.length) return { answer: "cannot", word: "Cannot assess", reasons: reasons, notMeasured: NOT_MEASURED };
     var n = canFlag.length, held = belowLine.length;
-    return { answer: "clear", word: held ? "No hold from these readings" : "Nothing flagged in " + n + (n === 1 ? " reading" : " readings"),
-      reasons: (held ? [] : ["None of the " + n + " readings that can flag for this task is flagged. That is all this check can say."]).concat(reasons), notMeasured: NOT_MEASURED };
+    return { answer: "clear", word: held ? "Not held by these readings" : "Nothing flagged in " + n + (n === 1 ? " reading" : " readings"),
+      reasons: (held ? [] : ["None of the " + n + " readings that can flag for this task is flagged."]).concat(reasons, ["This is a check of readings. It is not clearance for the task."]), notMeasured: NOT_MEASURED };
   }
   root.TASKS = { checkTask: checkTask, NOT_MEASURED: NOT_MEASURED };
 })(typeof window !== "undefined" ? window : globalThis);

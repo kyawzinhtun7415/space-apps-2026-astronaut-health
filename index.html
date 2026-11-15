@@ -12,11 +12,12 @@
     <h1>Astronaut Health Twin</h1>
     <p class="sub">How am I doing today, what is abnormal, and what should I do about it?</p>
   </div>
-  <span class="badge" role="note" id="badge">Simulated sample data</span>
+  <span class="badge" role="note" id="badge">Concept prototype · simulated sample data</span>
 </header>
 
 <section class="intro" aria-label="About this prototype">
   <p>This prototype shows how a crew member far from Earth could judge their own health readings alone. Pick a sample day, or enter your own readings. Each reading is compared with your own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then you get a summary of how you are doing, what changed, and a plan for what to do and who to tell.</p>
+  <p class="hint"><strong>Why "twin"?</strong> Your twin here is your own pre-launch baseline, today's readings on your body, and a look ahead. It is not a simulation of your body.</p>
   <p id="missionNote" class="hint"></p>
   <details class="gloss">
     <summary>Words used on this page</summary>
@@ -71,6 +72,7 @@
   <h2 id="todayH">Today: how you are doing</h2>
   <p id="sumHead" class="sumhead"></p>
   <p id="sumSub" class="sumsub"></p>
+  <p id="sumFirst" class="sumfirst" hidden></p>
   <div id="sumChips" class="sumchips" role="group" aria-label="Each reading at a glance"></div>
   <fieldset class="flags">
     <legend>How do you feel? Tick any of these right now (example list by this team)</legend>
@@ -84,8 +86,15 @@
 
 <section class="card plan" aria-labelledby="planH">
   <h2 id="planH">What to do now</h2>
-  <ol id="steps" class="steps"></ol>
+  <div id="steps"></div>
   <p class="hint">Example steps by this team. They are not NASA's rules and not medical advice. Where a step rests on a published source, the source is named.</p>
+</section>
+
+<section class="card" aria-labelledby="habitH">
+  <h2 id="habitH">Daily habits that protect you</h2>
+  <p class="hint">Each habit is taken from one of NASA's own pages. Tick them off as you go. Ticks stay in this browser.</p>
+  <ul id="habits" class="habits"></ul>
+  <p id="habitCount" class="habitcount" role="status"></p>
 </section>
 
 <main class="grid">
@@ -140,13 +149,6 @@
   <label for="fday">Flight day <output id="fdayOut"></output></label>
   <input id="fday" type="range" min="0" step="10">
   <div id="forecast" class="fgrid"></div>
-</section>
-
-<section class="card" aria-labelledby="habitH">
-  <h2 id="habitH">Daily habits that protect you</h2>
-  <p class="hint">Each habit is taken from one of NASA's own pages. Tick them off as you go. Ticks stay in this browser.</p>
-  <ul id="habits" class="habits"></ul>
-  <p id="habitCount" class="habitcount" role="status"></p>
 </section>
 
 <section class="card" aria-labelledby="reportH">

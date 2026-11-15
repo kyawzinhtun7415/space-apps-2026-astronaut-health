@@ -166,8 +166,7 @@ test("summary: a serious reading leads, and missing readings are counted", () =>
   const r = ASSESS.assessAll(KEYS, { sys: 88, dia: 50, hr: null, temp: 38.4, sleep: 7.5, glucose: 90, mood: 4 }, SAMPLE.baseline, 90, RANGES, RULES);
   const s = INSIGHTS.summary(KEYS, r, RANGES);
   assert.equal(s.level, "serious");
-  assert.match(s.headline, /1 reading needs action now/);
-  assert.match(s.sub, /1 more needs a re-check/);
+  assert.equal(s.headline, "2 readings need attention, 1 of them now: blood pressure and body temperature");
   assert.match(s.sub, /1 has no valid reading/);
 });
 test("notes: a fast rise in temperature is called out with the reason it is not the space shift", () => {
@@ -181,7 +180,7 @@ test("notes: several readings moving together is called out; a steady week is no
   assert.ok(!notes("d30").some(x => x.kind === "warn"));
 });
 test("notes: a missing reading says when the last valid one was", () => {
-  assert.ok(notes("d93").some(x => /No valid blood pressure reading today\. The last valid one was 108 mmHg, 1 day ago/.test(x.text)));
+  assert.ok(notes("d93").some(x => /No valid blood pressure reading today\. The last valid one was 108\/66 mmHg, 1 day ago/.test(x.text)));
 });
 test("notes: short sleep on most nights is called out with NASA's line", () => {
   const n = notes("d92").find(x => x.key === "sleep");
@@ -190,11 +189,14 @@ test("notes: short sleep on most nights is called out with NASA's line", () => {
 });
 
 // ---- what to do: the plan
-test("plan: the fever day gives re-check, tell the medic today, hold exercise, protect sleep", () => {
+test("plan: the fever day tells the medic now, stops exercise, then re-checks; nothing is left for tomorrow", () => {
   const p = plan("d92");
-  assert.deepEqual(ids(p).slice(0, 4), ["recheck", "tell", "hold", "sleep"]);
-  assert.match(p[0].text, /blood pressure in 30 minutes and body temperature in 60 minutes/);
-  assert.equal(p[1].text, "Tell the crew medical officer today.");
+  assert.deepEqual(ids(p).slice(0, 3), ["tellnow", "hold", "recheck"]);
+  assert.match(p[0].text, /^Tell the crew medical officer now, and send today's readings to the flight surgeon on Earth/);
+  assert.match(p[0].why, /Core temperature is flagged high, and blood pressure and heart rate have moved with it/);
+  assert.match(p[2].text, /blood pressure in 30 minutes, heart rate in 30 minutes and body temperature in 60 minutes/);
+  assert.ok(!ids(p).includes("tomorrow"));
+  assert.ok(ids(p).includes("sleep") && ids(p).includes("mood"));
 });
 test("plan: an ordinary day says no action, and says readings cannot see symptoms", () => {
   const p = plan("d30");
@@ -211,16 +213,19 @@ test("plan: low blood sugar leads with the 15/15 rule and names its source", () 
 test("plan: an expected shift does not hold exercise; an unexplained rise does", () => {
   assert.ok(ids(plan("d90")).includes("heat"));
   assert.ok(!ids(plan("d90")).includes("hold"));
-  assert.deepEqual(ids(plan("d10")).slice(0, 3), ["recheck", "tell", "hold"]);
+  assert.deepEqual(ids(plan("d10")).slice(0, 3), ["hold", "recheck", "tell"]);
+  assert.doesNotMatch(plan("d90").map(a => a.text).join(" "), /as planned/);
 });
 test("plan: a ticked symptom or a serious reading puts the crew medical officer first, now", () => {
   const p = plan("d30", ["Chest pain"]);
-  assert.equal(p[0].id, "redflag");
+  assert.equal(p[0].id, "tellnow");
   assert.equal(p[0].when, "Now");
+  assert.equal(p[1].id, "hold");
   const r = ASSESS.assessAll(KEYS, { sys: 88, dia: 50, hr: 64, temp: 37.0, sleep: 7.5, glucose: 90, mood: 4 }, SAMPLE.baseline, 30, RANGES, RULES);
   const q = ACTIONS.plan(KEYS, r, { RANGES, RULES, SOURCES, flags: [], notes: [] });
-  assert.equal(q[0].id, "serious");
+  assert.equal(q[0].id, "tellnow");
   assert.match(q[0].why, /20 minutes one way/);
+  assert.equal(q[1].id, "hold"); // a serious reading always stops hard physical work
 });
 test("plan: every step is either the team's own or names a source, and none diagnoses", () => {
   SAMPLE.days.forEach(d => plan(d.id).forEach(a => {
@@ -234,7 +239,9 @@ test("report for Earth lists every reading, the steps, and says it is a prototyp
   KEYS.forEach(k => assert.ok(txt.includes(RANGES[k].label), k));
   assert.match(txt, /concept prototype, simulated data/);
   assert.match(txt, /Flight day 92/);
-  assert.match(txt, /1\. Within the hour: Re-check/);
+  assert.match(txt, /1\. Now: Tell the crew medical officer now/);
+  assert.match(txt, /Draft only: nothing has been sent/);
+  assert.match(txt, /-11 mmHg on the top number from pre-launch baseline/);
 });
 
 // ---- looking ahead
@@ -255,5 +262,123 @@ test("plan: typed-in readings with empty boxes ask for the readings, not for a s
   const s = p.find(a => a.id === "sensor");
   assert.match(s.text, /^Add your blood pressure, heart rate, sleep and mood when you have them/);
   assert.equal(r.glucose.status, "nobase");
-  assert.equal(INSIGHTS.summary(KEYS, r, RANGES).headline, "1 reading needs attention");
+  assert.equal(INSIGHTS.summary(KEYS, r, RANGES).headline, "1 reading needs attention: body temperature");
+});
+
+const planFor = (r, base = SAMPLE.baseline, d = 90, extra = {}) => { const res = ASSESS.assessAll(KEYS, r, base, d, RANGES, RULES); return { res, p: ACTIONS.plan(KEYS, res, Object.assign({ RANGES, RULES, SOURCES, flags: [], notes: [] }, extra)) }; };
+const NORMAL = { sys: 118, dia: 76, hr: 64, temp: 36.8, sleep: 7.5, glucose: 90, mood: 4 };
+test("plan: a low temperature never says 'above your baseline' or talks about exercise heat", () => {
+  [35.5, 34.9].forEach(v => {
+    const { p } = planFor(Object.assign({}, NORMAL, { temp: v }), SAMPLE.baseline, 30);
+    const hold = p.find(a => a.id === "hold");
+    assert.ok(hold, "hold step at " + v);
+    assert.doesNotMatch(hold.why, /-\d|above your baseline|rose higher/, hold.why);
+    assert.match(hold.why, /below your baseline/);
+    assert.equal(hold.basis.length, 0);
+  });
+});
+test("plan: the hold step only points at a re-check that exists", () => {
+  const low = planFor(Object.assign({}, NORMAL, { temp: 34.9 }), SAMPLE.baseline, 30).p; // score 3: act now
+  assert.match(low.find(a => a.id === "hold").text, /until the crew medical officer has seen you/);
+  [low, planFor(Object.assign({}, NORMAL, { temp: 38.6 }), SAMPLE.baseline, 90).p, plan("d10"), plan("d92")].forEach(p => {
+    if (p.some(a => /re-check/.test(a.text + a.why) && a.id !== "recheck")) assert.ok(ids(p).includes("recheck"));
+  });
+});
+test("plan: very low blood sugar is treated first, then the crew medical officer is told", () => {
+  const { p } = planFor(Object.assign({}, NORMAL, { glucose: 40 }), SAMPLE.baseline, 30);
+  assert.deepEqual(ids(p).slice(0, 3), ["lowsugar", "tellnow", "hold"]);
+});
+test("plan: a ticked symptom still comes before everything else", () => {
+  const { p } = planFor(Object.assign({}, NORMAL, { glucose: 40 }), SAMPLE.baseline, 30, { flags: ["Chest pain"] });
+  assert.equal(p[0].id, "tellnow");
+  assert.equal(p.filter(a => a.id === "tellnow").length, 1);
+});
+test("summary: with no baseline and nothing flagged, it does not claim closeness to a baseline", () => {
+  const res = ASSESS.assessAll(KEYS, NORMAL, {}, 90, RANGES, RULES);
+  const s = INSIGHTS.summary(KEYS, res, RANGES);
+  assert.doesNotMatch(s.headline, /close to your baseline/);
+  assert.match(s.headline, /Enter your baseline/);
+});
+test("no sentence the plan, summary or report can produce contains undefined, null or NaN", () => {
+  const cases = [EMPTY_R(), NORMAL, Object.assign({}, NORMAL, { temp: 34.9, glucose: 40, hr: 150 }), Object.assign(EMPTY_R(), { temp: 38.4 }), Object.assign({}, NORMAL, { sys: 230, dia: 130 })];
+  const bases = [SAMPLE.baseline, {}, { temp: 36.7 }];
+  cases.forEach(r => bases.forEach(b => [0, 10, 90, 180].forEach(d => {
+    const res = ASSESS.assessAll(KEYS, r, b, d, RANGES, RULES), sum = INSIGHTS.summary(KEYS, res, RANGES);
+    const fake = { id: "x", day: d, r, week: null, trend: null };
+    const nts = INSIGHTS.notes(KEYS, fake, res, b, RANGES, RULES, SOURCES);
+    [true, false].forEach(custom => {
+      const p = ACTIONS.plan(KEYS, res, { RANGES, RULES, SOURCES, flags: [], notes: nts, custom });
+      const all = [sum.headline, sum.sub].concat(nts.map(n => n.text + (n.more || "")), p.map(a => a.text + " " + a.why), [ACTIONS.report(KEYS, res, fake, sum, p, { RANGES, flags: [], notes: nts, custom })]).join(" | ");
+      assert.doesNotMatch(all, /undefined|\bnull\b|NaN/, all.slice(0, 300));
+    });
+  })));
+});
+function EMPTY_R() { return { sys: null, dia: null, hr: null, temp: null, sleep: null, glucose: null, mood: null }; }
+
+// ---- cases a fresh medical review raised
+test("plan: a ticked symptom never sits beside advice to exercise", () => {
+  const p = plan("d90", ["Chest pain"]);
+  assert.deepEqual(ids(p).slice(0, 2), ["tellnow", "hold"]);
+  assert.ok(!ids(p).includes("heat"));
+  assert.doesNotMatch(p.map(a => a.text).join(" "), /If you exercise|as planned/);
+});
+test("plan: a serious reading with a ticked symptom gives one tell-now step, not two", () => {
+  const { p } = planFor(Object.assign({}, NORMAL, { hr: 135 }), SAMPLE.baseline, 30, { flags: ["Chest pain", "New confusion"] });
+  assert.equal(p.filter(a => /^Tell the crew medical officer now/.test(a.text)).length, 1);
+  assert.match(p[0].why, /chest pain and new confusion/);
+  assert.match(p[0].why, /heart rate 135 bpm/);
+});
+test("plan: no two steps on any day say the same thing, and steps run soonest first", () => {
+  const ORDER = ["Now", "Within the hour", "Today", "Tonight", "Tomorrow"];
+  const all = SAMPLE.days.map(d => plan(d.id)).concat(SAMPLE.days.map(d => plan(d.id, ["Chest pain"])));
+  [{ hr: 135 }, { glucose: 40 }, { glucose: 69 }, { temp: 39.5 }, { temp: 34.9 }, { sys: 85, dia: 50 }, { mood: 1 }, { sleep: 5 }, { sys: 150, dia: 95, hr: 120, temp: 38.5 }].forEach(x => all.push(planFor(Object.assign({}, NORMAL, x), SAMPLE.baseline, 90).p));
+  all.forEach(p => {
+    assert.equal(new Set(p.map(a => a.text)).size, p.length, p.map(a => a.text).join(" | "));
+    const ranks = p.map(a => ORDER.indexOf(a.when));
+    assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b));
+    p.forEach((a, i) => assert.equal(a.n, i + 1));
+  });
+});
+test("plan: slightly low blood sugar still says when to tell the crew medical officer", () => {
+  const { p } = planFor(Object.assign({}, NORMAL, { glucose: 69 }), SAMPLE.baseline, 30);
+  assert.equal(p[0].id, "lowsugar");
+  assert.match(p[0].why, /still under 70 after the second check, tell the crew medical officer/);
+});
+test("plan: a temperature clearly outside the normal range tells the medic now, even alone", () => {
+  const { p } = planFor(Object.assign({}, NORMAL, { temp: 39.5 }), SAMPLE.baseline, 90);
+  assert.deepEqual(ids(p).slice(0, 3), ["tellnow", "hold", "recheck"]);
+  assert.match(p[0].why, /clearly outside the normal range/);
+});
+test("plan: a serious blood pressure or pulse always stops hard physical work", () => {
+  [{ sys: 85, dia: 50 }, { hr: 140 }].forEach(x => {
+    const { p } = planFor(Object.assign({}, NORMAL, x), SAMPLE.baseline, 30);
+    assert.deepEqual(ids(p).slice(0, 2), ["tellnow", "hold"]);
+  });
+});
+test("mood at the bottom of the scale needs attention and asks for a person, not only a journal", () => {
+  const { res, p } = planFor(Object.assign({}, NORMAL, { mood: 1 }), SAMPLE.baseline, 30);
+  assert.equal(res.mood.status, "watch");
+  assert.ok(res.mood.teamRule);
+  assert.equal(INSIGHTS.summary(KEYS, res, RANGES).headline, "1 reading needs attention: mood");
+  assert.match(p.find(a => a.id === "mood").text, /^Talk to the crew medical officer or a crew mate today/);
+});
+test("summary: a rise the space shift does not explain is counted as needing attention", () => {
+  const s = INSIGHTS.summary(KEYS, run("d10"), RANGES);
+  assert.equal(s.headline, "1 reading needs attention: body temperature");
+  assert.equal(s.level, "watch");
+});
+test("summary: with no baseline, chips say IN RANGE and never OK", () => {
+  const res = ASSESS.assessAll(KEYS, NORMAL, {}, 90, RANGES, RULES);
+  assert.deepEqual(INSIGHTS.summary(KEYS, res, RANGES).chips.map(c => c.state), Array(6).fill("IN RANGE"));
+});
+test("sleep just under 7 hours is never shown as 7.0", () => {
+  const { p } = planFor(Object.assign({}, NORMAL, { sleep: 6.99 }), SAMPLE.baseline, 30);
+  assert.match(p.find(a => a.id === "sleep").why, /You slept 6\.9 h/);
+});
+test("task check: a spacewalk holds under 7 hours of sleep, cabin work under 6", () => {
+  const r = run("d90"); // sleep 6.4
+  assert.equal(TASKS.checkTask(task("eva"), r, RULES, RANGES, []).answer, "hold");
+  const out = TASKS.checkTask(task("cabin"), r, RULES, RANGES, []);
+  assert.equal(out.word, "Not held by these readings");
+  assert.match(out.reasons.join(" "), /not clearance/);
 });
