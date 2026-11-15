@@ -10,12 +10,18 @@
 <header class="top">
   <div>
     <h1>Astronaut Health Twin</h1>
+    <p class="mission" id="missionLine"></p>
     <p class="sub">How am I doing today, what is abnormal, and what should I do about it?</p>
   </div>
-  <span class="badge" role="note" id="badge">Concept prototype · simulated sample data</span>
+  <div class="toppills">
+    <a class="pill" id="delayPill" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Earth reply: up to 20 min one way</a>
+    <span class="badge" role="note" id="badge">Concept prototype · simulated sample data</span>
+  </div>
 </header>
 
 <section class="intro" aria-label="About this prototype">
+  <details class="about">
+  <summary>About this prototype, and the words it uses</summary>
   <p>This prototype shows how a crew member far from Earth could judge their own health readings alone. Pick a sample day, or enter your own readings. Each reading is compared with your own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then you get a summary of how you are doing, what changed, and a plan for what to do and who to tell.</p>
   <p class="hint"><strong>Why "twin"?</strong> Your twin here is your own pre-launch baseline, today's readings on your body, and a look ahead. It is not a simulation of your body.</p>
   <p id="missionNote" class="hint"></p>
@@ -31,6 +37,7 @@
       <dt>mg/dL</dt><dd>The unit for blood sugar used here.</dd>
       <dt>Core temperature</dt><dd>The temperature inside the body, not at the skin.</dd>
     </dl>
+  </details>
   </details>
 </section>
 
@@ -68,6 +75,7 @@
   </form>
 </section>
 
+<div class="hero">
 <section class="card today" aria-labelledby="todayH">
   <h2 id="todayH">Today: how you are doing</h2>
   <p id="sumHead" class="sumhead"></p>
@@ -84,28 +92,20 @@
   <p class="hint">Pattern notes describe readings. They are not a diagnosis. The cut-offs behind them are this team's.</p>
 </section>
 
-<section class="card plan" aria-labelledby="planH">
-  <h2 id="planH">What to do now</h2>
-  <div id="steps"></div>
-  <p class="hint">Example steps by this team. They are not NASA's rules and not medical advice. Where a step rests on a published source, the source is named.</p>
-</section>
-
-<section class="card" aria-labelledby="habitH">
-  <h2 id="habitH">Daily habits that protect you</h2>
-  <p class="hint">Each habit is taken from one of NASA's own pages. Tick them off as you go. Ticks stay in this browser.</p>
-  <ul id="habits" class="habits"></ul>
-  <p id="habitCount" class="habitcount" role="status"></p>
-</section>
-
-<main class="grid">
-  <section class="figure-card" aria-label="Body figure">
-    <h2>Your body</h2>
-    <p class="hint">Click a body part, or use the list below it.</p>
-    <svg id="figure" viewBox="0 0 220 420" role="group" aria-label="Body figure with four clickable regions">
+<section class="figure-card" aria-label="Body figure">
+  <h2>Digital twin</h2>
+  <p class="hint">Click a body part, or use the list below it.</p>
+  <div id="twinStage" class="twinstage">
+    <svg id="figure" viewBox="0 0 220 440" role="group" aria-label="Body figure with four clickable regions">
+      <g class="platform" aria-hidden="true">
+        <ellipse cx="110" cy="420" rx="94" ry="14"/>
+        <ellipse cx="110" cy="420" rx="62" ry="9"/>
+      </g>
       <g class="limbs">
+        <rect x="100" y="76" width="20" height="18" rx="6"/>
         <rect x="150" y="96" width="26" height="150" rx="13"/>
-        <rect x="72" y="250" width="34" height="160" rx="16"/>
-        <rect x="114" y="250" width="34" height="160" rx="16"/>
+        <rect x="72" y="250" width="34" height="164" rx="16"/>
+        <rect x="114" y="250" width="34" height="164" rx="16"/>
       </g>
       <g class="region" data-region="head" tabindex="0" role="button">
         <circle cx="110" cy="46" r="34"/>
@@ -124,11 +124,27 @@
         <text x="55" y="175" transform="rotate(-90 55 175)">Arm</text>
       </g>
     </svg>
-    <ul id="regionList" class="regionlist" aria-label="Body regions"></ul>
-    <h3 class="small-h">Not measured in this prototype</h3>
-    <ul id="notMeasured" class="notmeasured"></ul>
-  </section>
+  </div>
+  <ul id="regionList" class="regionlist" aria-label="Body regions"></ul>
+  <h3 class="small-h">Not measured in this prototype</h3>
+  <ul id="notMeasured" class="notmeasured"></ul>
+</section>
 
+<section class="card plan" aria-labelledby="planH">
+  <h2 id="planH">What to do now</h2>
+  <div id="steps"></div>
+  <p class="hint">Example steps by this team. They are not NASA's rules and not medical advice. Where a step rests on a published source, the source is named.</p>
+</section>
+</div>
+
+<section class="card" aria-labelledby="habitH">
+  <h2 id="habitH">Daily habits that protect you</h2>
+  <p class="hint">Each habit is taken from one of NASA's own pages. Tick them off as you go. Ticks stay in this browser.</p>
+  <ul id="habits" class="habits"></ul>
+  <p id="habitCount" class="habitcount" role="status"></p>
+</section>
+
+<main class="grid">
   <section class="readings" aria-label="Readings">
     <h2>Today's readings</h2>
     <div id="tiles" class="tiles"></div>

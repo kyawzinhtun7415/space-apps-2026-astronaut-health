@@ -115,6 +115,7 @@
     $("dayNote").textContent = day.note + (day.custom ? "" : " (" + SAMPLE.person + ".)");
     $("mine").hidden = !day.custom;
     $("badge").textContent = "Concept prototype · " + (day.custom ? "typed by you, not a sensor" : "simulated sample data");
+    $("missionLine").textContent = "Flight day " + day.day + " of " + SAMPLE.missionDays + " · " + (day.custom ? "your own readings" : "sample crew member");
 
     // Today: how you are doing
     var first = steps[0], hold = steps.some(function (x) { return x.id === "hold"; });
@@ -323,6 +324,7 @@
     $("mineMsg").textContent = "Baseline boxes now hold the made-up sample crew member's numbers. Replace them with your own. " + $("mineMsg").textContent;
   });
   $("missionNote").textContent = SAMPLE.mission;
+  $("delayPill").href = HAZARDS.distance.url; // NASA, Hazard: Distance From Earth
 
   function keyClick(e) { var t = e.target.closest("[data-key]"); if (t) { state.key = t.getAttribute("data-key"); render(); } }
   $("tiles").addEventListener("click", keyClick);
