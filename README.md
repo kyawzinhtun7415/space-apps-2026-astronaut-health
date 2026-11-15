@@ -11,7 +11,7 @@ It shows how a crew member far from Earth could judge their own health readings 
 - **Today: how you are doing.** One headline, each reading at a glance (high, low, up, down, expected, OK, no reading), and notes on what changed in the last 7 days.
 - **What to do now.** An ordered plan: re-check, tell the crew medical officer, hold a task, protect sleep. Each step says whether it is the team's own example or rests on a named source.
 - A symptom box that overrides the readings.
-- A body figure with clickable regions, and the same regions as a plain list.
+- A 3D body twin with clickable regions, built in code from simple shapes with three.js. A flat figure shows if 3D cannot start, and the same regions are also a plain list.
 - Six readings: blood pressure, heart rate, core temperature, sleep, blood sugar and mood.
 - Five sample days for one made-up crew member, including a fever on top of the space shift and a dead sensor.
 - A form to type in your own readings and your own baseline. They stay in your browser.
@@ -65,6 +65,7 @@ Other sources:
 - US CDC, about sleep: https://www.cdc.gov/sleep/about/index.html
 - Canadian Space Agency, Bio-Monitor: https://www.asc-csa.gc.ca/eng/sciences/bio-monitor.asp
 - Axiom Space release, 26 Sep 2025: https://axiomspace.com/release/suite-ride-research-unlocks-potential-for-first-astronaut-with-diabetes
+- three.js r160, the library that draws the 3D figure (MIT licence, copy in `vendor/`): https://github.com/mrdoob/three.js
 
 ## Related NASA work
 
