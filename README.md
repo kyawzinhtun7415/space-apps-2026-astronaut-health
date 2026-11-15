@@ -64,6 +64,15 @@ Other sources:
 - Canadian Space Agency, Bio-Monitor: https://www.asc-csa.gc.ca/eng/sciences/bio-monitor.asp
 - Axiom Space release, 26 Sep 2025: https://axiomspace.com/release/suite-ride-research-unlocks-potential-for-first-astronaut-with-diabetes
 
+## Related NASA work
+
+This prototype builds on a problem NASA has worked on for years. It does not claim to be the first.
+
+- Medical Data Architecture, led from NASA Ames: ground prototypes of a system to give the crew actionable medical information without ground support. https://ntrs.nasa.gov/citations/20200000568
+- Autonomous Medical Operations: a project for an on-board Medical Decision Support System, now listed by NASA as archived. https://www.nasa.gov/directorates/stmd/game-changing-development-program/autonomous-medical-operations-amo/
+
+Those projects aim at the crew medical officer, clinical decision support and joining up medical data. This prototype is a crew-facing layer for any crew member: three checks on every reading, a plain summary and an ordered plan.
+
 ## Use of AI
 
 This prototype was built with help from Claude (Anthropic). Claude helped brainstorm, research sources, write the code and tests, and review them. The team chose the idea and owns the rules.
