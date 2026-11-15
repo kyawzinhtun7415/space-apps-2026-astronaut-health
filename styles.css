@@ -334,3 +334,5 @@ body { padding-top: 16px; }
 .twinlabel.s-cannot { color: var(--cannot); border-style: dashed; }
 .twinlabel.sel { box-shadow: 0 0 0 2px #fff; }
 @media (max-width: 760px) { .twinstage.has3d { height: 400px; } }
+/* If 3D stops after it started, the dead canvas and its labels must not sit over the flat figure. */
+.twinstage:not(.has3d) canvas, .twinstage:not(.has3d) .twinlabel { display: none; }
