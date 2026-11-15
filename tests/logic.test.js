@@ -388,3 +388,8 @@ test("sources: the three NASA pages the challenge lists are in the page's source
   ["https://www.nasa.gov/hrp/hazards/", "https://www.nasa.gov/hrp/risks/", "https://www.nasa.gov/hrp/ongoing-hrp-research/"]
     .forEach(u => assert.ok(urls.includes(u), "missing " + u));
 });
+
+test("3D figure: twin3d.js is display only and names no rule or range", () => {
+  const src = require("node:fs").readFileSync(path.join(__dirname, "..", "js", "twin3d.js"), "utf8");
+  assert.doesNotMatch(src, /\b(RULES|RANGES|ASSESS|ACTIONS|INSIGHTS|TASKS|FORECAST|SAMPLE)\b/);
+});

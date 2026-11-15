@@ -35,6 +35,7 @@
     Object.keys(savedDone).forEach(function (d) { if (Array.isArray(savedDone[d])) done[d] = savedDone[d].filter(function (x) { return habitIds.indexOf(x) !== -1; }); });
   } catch (e) { done = {}; }
   var last = {};
+  var twinOn = false; // true once the 3D figure has started; the flat figure is used until then
 
   function $(id) { return document.getElementById(id); }
   function copy(o) { return JSON.parse(JSON.stringify(o)); }
@@ -160,7 +161,7 @@
       var reg = RANGES[k].region, s = res[k].status;
       if (!worst[reg] || STATUS[s].rank > STATUS[worst[reg]].rank) worst[reg] = s;
     });
-    var selReg = RANGES[state.key].region;
+    var selReg = RANGES[state.key].region, twinInfo = {};
     Array.prototype.forEach.call(document.querySelectorAll(".region"), function (g) {
       var reg = g.getAttribute("data-region"), st = STATUS[worst[reg]];
       g.setAttribute("class", "region s-" + (st.cls || worst[reg]) + (reg === selReg ? " sel" : ""));
@@ -169,7 +170,9 @@
       var tx = g.querySelector("text");
       if (!tx.getAttribute("data-name")) tx.setAttribute("data-name", tx.textContent);
       tx.textContent = tx.getAttribute("data-name") + " " + st.icon;
+      twinInfo[reg] = { cls: st.cls || worst[reg], label: tx.getAttribute("data-name") + " " + st.icon };
     });
+    if (twinOn) window.TWIN3D.update(twinInfo, selReg); // the 3D figure shows the same status map; it decides nothing
     setHTML("regionList", Object.keys(REGIONS).map(function (reg) {
       return '<li><button data-region="' + reg + '" aria-pressed="' + (reg === selReg) + '"><span>' + REGIONS[reg] + '</span>' + chip(worst[reg]) + '</button></li>';
     }).join(""));
@@ -380,5 +383,6 @@
     HABITS.filter(function (h, i, a) { return a.findIndex(function (x) { return x.source.url === h.source.url; }) === i; })
       .map(function (h) { return "<li>" + link(h.source) + "</li>"; }).join("");
   state.fday = clampDay(SAMPLE.days[START].day);
+  twinOn = !!(window.TWIN3D && window.TWIN3D.init($("twinStage"), pickRegion));
   render();
 })();
