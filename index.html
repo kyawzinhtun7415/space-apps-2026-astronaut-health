@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crew Health Self-Check (concept prototype)</title>
+<title>Astronaut Health Twin (concept prototype)</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="top">
   <div>
-    <h1>Crew Health Self-Check</h1>
-    <p class="sub">Is this reading normal for space, for me, today?</p>
+    <h1>Astronaut Health Twin</h1>
+    <p class="sub">How am I doing today, what is abnormal, and what should I do about it?</p>
   </div>
-  <span class="badge" role="note">Simulated sample data</span>
+  <span class="badge" role="note" id="badge">Simulated sample data</span>
 </header>
 
 <section class="intro" aria-label="About this prototype">
-  <p>This prototype shows how a crew member far from Earth could judge a health reading alone. Pick a sample day, or enter your own readings. Each reading is compared with your own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then it says what to do and who to tell.</p>
+  <p>This prototype shows how a crew member far from Earth could judge their own health readings alone. Pick a sample day, or enter your own readings. Each reading is compared with your own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then you get a summary of how you are doing, what changed, and a plan for what to do and who to tell.</p>
   <p id="missionNote" class="hint"></p>
   <details class="gloss">
     <summary>Words used on this page</summary>
@@ -25,6 +25,7 @@
       <dt>Space shift</dt><dd>A change that a study measured in crews during flight. It is an average for a small group.</dd>
       <dt>Clinical chart</dt><dd>A published table of normal and abnormal values that clinicians use on Earth.</dd>
       <dt>NEWS2</dt><dd>A UK hospital chart that gives each vital sign a score from 0 to 3. Higher means further from normal.</dd>
+      <dt>Flagged</dt><dd>A published chart puts the value outside its normal range. High or low says which side.</dd>
       <dt>mmHg</dt><dd>The unit for blood pressure. The top number is the pressure when the heart beats, the bottom number when it rests.</dd>
       <dt>mg/dL</dt><dd>The unit for blood sugar used here.</dd>
       <dt>Core temperature</dt><dd>The temperature inside the body, not at the skin.</dd>
@@ -36,31 +37,55 @@
   <label for="day">Sample day</label>
   <select id="day"></select>
   <p id="dayNote" class="daynote"></p>
-  <form id="mine" class="mine" hidden>
+  <form id="mine" class="mine" hidden novalidate>
     <p class="hint">Type your own readings. Leave a box empty if you have no reading. They stay in this browser and are sent nowhere.</p>
     <div class="minegrid">
-      <label>Flight day <input name="day" type="number" min="0" max="1000" step="1" inputmode="numeric"></label>
-      <label>Blood pressure, top (mmHg) <input name="sys" type="number" min="50" max="260" step="1" inputmode="numeric"></label>
-      <label>Blood pressure, bottom (mmHg) <input name="dia" type="number" min="30" max="160" step="1" inputmode="numeric"></label>
-      <label>Heart rate (bpm) <input name="hr" type="number" min="20" max="220" step="1" inputmode="numeric"></label>
-      <label>Core temperature (°C) <input name="temp" type="number" min="30" max="43" step="0.1" inputmode="decimal"></label>
-      <label>Sleep last night (h) <input name="sleep" type="number" min="0" max="16" step="0.1" inputmode="decimal"></label>
-      <label>Blood sugar, morning (mg/dL) <input name="glucose" type="number" min="20" max="500" step="1" inputmode="numeric"></label>
+      <label>Flight day, 0 to 180 <input name="day" type="number" min="0" max="180" step="1" inputmode="numeric"></label>
+      <label>Blood pressure, top (mmHg), 50 to 260 <input name="sys" type="number" min="50" max="260" step="1" inputmode="numeric"></label>
+      <label>Blood pressure, bottom (mmHg), 30 to 160 <input name="dia" type="number" min="30" max="160" step="1" inputmode="numeric"></label>
+      <label>Heart rate (bpm), 20 to 220 <input name="hr" type="number" min="20" max="220" step="1" inputmode="numeric"></label>
+      <label>Core temperature (°C), 30 to 43 <input name="temp" type="number" min="30" max="43" step="0.1" inputmode="decimal"></label>
+      <label>Sleep last night (hours), 0 to 16 <input name="sleep" type="number" min="0" max="16" step="0.1" inputmode="decimal"></label>
+      <label>Blood sugar, morning (mg/dL), 20 to 500 <input name="glucose" type="number" min="20" max="500" step="1" inputmode="numeric"></label>
       <label>Mood, 1 low to 5 good <input name="mood" type="number" min="1" max="5" step="1" inputmode="numeric"></label>
     </div>
-    <details>
-      <summary>My pre-launch baseline</summary>
+    <fieldset class="basefs">
+      <legend>My pre-launch baseline (your own normal numbers on Earth)</legend>
+      <p class="hint">Empty to start. Without a baseline, a reading is judged by the clinical chart only.</p>
       <div class="minegrid">
-        <label>Top (mmHg) <input name="b_sys" type="number" min="50" max="260" step="1"></label>
-        <label>Bottom (mmHg) <input name="b_dia" type="number" min="30" max="160" step="1"></label>
-        <label>Heart rate (bpm) <input name="b_hr" type="number" min="20" max="220" step="1"></label>
-        <label>Core temperature (°C) <input name="b_temp" type="number" min="30" max="43" step="0.1"></label>
-        <label>Sleep (h) <input name="b_sleep" type="number" min="0" max="16" step="0.1"></label>
-        <label>Blood sugar (mg/dL) <input name="b_glucose" type="number" min="20" max="500" step="1"></label>
-        <label>Mood, 1 to 5 <input name="b_mood" type="number" min="1" max="5" step="1"></label>
+        <label>Baseline: blood pressure, top (mmHg) <input name="b_sys" type="number" min="50" max="260" step="1"></label>
+        <label>Baseline: blood pressure, bottom (mmHg) <input name="b_dia" type="number" min="30" max="160" step="1"></label>
+        <label>Baseline: heart rate (bpm) <input name="b_hr" type="number" min="20" max="220" step="1"></label>
+        <label>Baseline: core temperature (°C) <input name="b_temp" type="number" min="30" max="43" step="0.1"></label>
+        <label>Baseline: sleep (hours) <input name="b_sleep" type="number" min="0" max="16" step="0.1"></label>
+        <label>Baseline: blood sugar (mg/dL) <input name="b_glucose" type="number" min="20" max="500" step="1"></label>
+        <label>Baseline: mood, 1 to 5 <input name="b_mood" type="number" min="1" max="5" step="1"></label>
       </div>
-    </details>
+      <button type="button" id="useSample">Fill with the sample baseline</button>
+    </fieldset>
+    <p id="mineMsg" class="minemsg" role="status"></p>
   </form>
+</section>
+
+<section class="card today" aria-labelledby="todayH">
+  <h2 id="todayH">Today: how you are doing</h2>
+  <p id="sumHead" class="sumhead"></p>
+  <p id="sumSub" class="sumsub"></p>
+  <div id="sumChips" class="sumchips" role="group" aria-label="Each reading at a glance"></div>
+  <fieldset class="flags">
+    <legend>How do you feel? Tick any of these right now (example list by this team)</legend>
+    <div id="flagBoxes" class="flagboxes"></div>
+  </fieldset>
+  <p id="sumCaveat" class="hint"></p>
+  <h3 class="small-h">What changed in the last 7 days</h3>
+  <ul id="notes" class="notes"></ul>
+  <p class="hint">Pattern notes describe readings. They are not a diagnosis. The cut-offs behind them are this team's.</p>
+</section>
+
+<section class="card plan" aria-labelledby="planH">
+  <h2 id="planH">What to do now</h2>
+  <ol id="steps" class="steps"></ol>
+  <p class="hint">Example steps by this team. They are not NASA's rules and not medical advice. Where a step rests on a published source, the source is named.</p>
 </section>
 
 <main class="grid">
@@ -73,21 +98,21 @@
         <rect x="72" y="250" width="34" height="160" rx="16"/>
         <rect x="114" y="250" width="34" height="160" rx="16"/>
       </g>
-      <g class="region" data-region="head" tabindex="0" role="button" aria-label="Head: sleep and mood">
+      <g class="region" data-region="head" tabindex="0" role="button">
         <circle cx="110" cy="46" r="34"/>
         <text x="110" y="51">Head</text>
       </g>
-      <g class="region" data-region="chest" tabindex="0" role="button" aria-label="Heart: blood pressure and heart rate">
+      <g class="region" data-region="chest" tabindex="0" role="button">
         <rect x="68" y="90" width="84" height="76" rx="18"/>
         <text x="110" y="133">Heart</text>
       </g>
-      <g class="region" data-region="core" tabindex="0" role="button" aria-label="Core: body temperature">
+      <g class="region" data-region="core" tabindex="0" role="button">
         <rect x="68" y="170" width="84" height="80" rx="18"/>
         <text x="110" y="215">Core</text>
       </g>
-      <g class="region" data-region="arm" tabindex="0" role="button" aria-label="Arm: blood sugar">
-        <rect x="44" y="96" width="26" height="150" rx="13"/>
-        <text x="57" y="175" transform="rotate(-90 57 175)">Arm</text>
+      <g class="region" data-region="arm" tabindex="0" role="button">
+        <rect x="40" y="96" width="30" height="150" rx="13"/>
+        <text x="55" y="175" transform="rotate(-90 55 175)">Arm</text>
       </g>
     </svg>
     <ul id="regionList" class="regionlist" aria-label="Body regions"></ul>
@@ -98,7 +123,7 @@
   <section class="readings" aria-label="Readings">
     <h2>Today's readings</h2>
     <div id="tiles" class="tiles"></div>
-    <article id="panel" class="panel"></article>
+    <article id="panel" class="panel" aria-live="polite"></article>
   </section>
 </main>
 
@@ -106,11 +131,7 @@
   <h2>Readings check for today's task</h2>
   <p class="hint">An example check by this team. It looks only at the readings above and never says anyone is fit or cleared.</p>
   <div id="taskBtns" class="btnrow" role="group" aria-label="Task"></div>
-  <fieldset class="flags">
-    <legend>Any of these right now? (example list by this team)</legend>
-    <div id="flagBoxes" class="flagboxes"></div>
-  </fieldset>
-  <div id="taskOut" class="taskout" aria-live="polite"></div>
+  <div id="taskOut" class="taskout"></div>
 </section>
 
 <section class="card" aria-label="Looking ahead">
@@ -121,11 +142,25 @@
   <div id="forecast" class="fgrid"></div>
 </section>
 
+<section class="card" aria-labelledby="habitH">
+  <h2 id="habitH">Daily habits that protect you</h2>
+  <p class="hint">Each habit is taken from one of NASA's own pages. Tick them off as you go. Ticks stay in this browser.</p>
+  <ul id="habits" class="habits"></ul>
+  <p id="habitCount" class="habitcount" role="status"></p>
+</section>
+
+<section class="card" aria-labelledby="reportH">
+  <h2 id="reportH">Report for Earth</h2>
+  <p class="hint">A reply can take up to 20 minutes one way, so the report says everything in one go. In this prototype nothing is sent: copy the text to see what would go.</p>
+  <textarea id="report" class="report" readonly rows="12" aria-label="Report text"></textarea>
+  <p><button type="button" id="copyReport">Copy report</button> <span id="copyMsg" role="status" class="hint"></span></p>
+</section>
+
 <section class="card" aria-label="NASA's five hazards">
   <h2>NASA's five hazards of human spaceflight</h2>
   <p class="hint">Pick a hazard to see which readings it sits behind.</p>
   <div id="hazBtns" class="btnrow" role="group" aria-label="Hazard"></div>
-  <div id="hazOut" class="hazout" aria-live="polite"></div>
+  <div id="hazOut" class="hazout"></div>
 </section>
 
 <section class="legend" aria-label="What the labels mean">
@@ -135,7 +170,7 @@
 
 <footer>
   <p class="disclaimer"><strong>Concept prototype with simulated data. It does not detect disease or clear anyone for a task. Not a medical device.</strong></p>
-  <p>The "what to do and who to tell" lines, the task check, the symptom list and the cut-offs behind them are examples by this team. They are not NASA's rules. Score bands are quoted from the NEWS2 chart of the Royal College of Physicians. This tool does not reproduce that chart or calculate a NEWS2 total, and NEWS2 was designed for hospital patients, so it is a rough guide here. The tolerances behind "expected in space" and the act-now lines for pulse and low blood sugar are this team's own.</p>
+  <p>The summary, the pattern notes, the steps for what to do and who to tell, the task check, the symptom list and the cut-offs behind them are examples by this team. They are not NASA's rules. Score bands are quoted from the NEWS2 chart of the Royal College of Physicians. This tool does not reproduce that chart or calculate a NEWS2 total, and NEWS2 was designed for hospital patients, so it is a rough guide here. The tolerances behind "expected in space" and the act-now lines for pulse and low blood sugar are this team's own.</p>
   <h2>Sources</h2>
   <ul id="sources" class="sources"></ul>
   <p class="ai">AI assistance: this prototype was built with help from Claude (Anthropic).</p>
@@ -148,6 +183,8 @@
 <script src="js/tasks.js"></script>
 <script src="js/forecast.js"></script>
 <script src="js/hazards.js"></script>
+<script src="js/insights.js"></script>
+<script src="js/actions.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

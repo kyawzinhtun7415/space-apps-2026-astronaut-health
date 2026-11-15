@@ -5,9 +5,14 @@
     // TODO (you, as the team's medic): these are working defaults. Set your own.
     // shiftTolerance: how far from the measured space shift still counts as "expected in space".
     // baselineChange: how far from the pre-launch baseline counts as "changed from your baseline".
-    shiftTolerance: { bp: 5, temp: 0.4 },
+    shiftTolerance: { bp: 4, temp: 0.25 },
     baselineChange: { bp: 15, hr: 15, temp: 0.5, sleep: 1.5, glucose: 20, mood: 2 },
     recheckMinutes: { bp: 30, hr: 30, temp: 60, glucose: 15 },
+    // Insight rules. fastChange: a move this big in two days is called out. persistDays: flagged on this many of the last 7 days.
+    fastChange: { bp: 10, hr: 15, temp: 0.5, sleep: 1.5, glucose: 20, mood: 2 },
+    persistDays: 5,
+    togetherCount: 3,           // this many readings moving on the same day is called out
+    lowMood: 2,                 // mood at or below this adds a mood step to the plan
 
     // This team's own "act now" lines, for values the published references above do not grade.
     // They are examples, not from a chart. Set to null to switch one off.
@@ -19,7 +24,7 @@
       { id: "exercise", name: "Exercise session", needs: ["bp", "hr", "temp"], exertion: true },
       { id: "cabin", name: "Routine cabin work", needs: ["sleep", "mood"], exertion: false }
     ],
-    tempTightensExertion: true,   // hold exertion when core temperature is raised
+    tempTightensExertion: true,   // hold exertion when core temperature is flagged, or raised beyond what the space shift explains
     tempRiseForExertion: 0.5,     // °C above your own baseline that counts as raised
     sleepHoldBelow: 6,            // a task waits only when last night was under this many hours
 

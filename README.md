@@ -1,25 +1,30 @@
-# Astronaut health self-check (concept prototype)
+# Astronaut Health Twin (concept prototype)
 
 A one-page web prototype for the NASA Space Apps Challenge 2026 challenge "Create Health Monitoring Software for Astronauts on Space Missions".
 
-It shows how a crew member far from Earth could judge a health reading alone. Each reading is compared three ways: with the crew member's own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then it says in plain words what to do and who to tell.
+It shows how a crew member far from Earth could judge their own health readings alone. Each reading is compared three ways: with the crew member's own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then the tool says how you are doing today, what changed, what to do now and who to tell.
 
 **Concept prototype with simulated data. It does not detect disease or clear anyone for a task. Not a medical device.**
 
 ## What is in it
 
+- **Today: how you are doing.** One headline, each reading at a glance (high, low, up, down, expected, OK, no reading), and notes on what changed in the last 7 days.
+- **What to do now.** An ordered plan: re-check, tell the crew medical officer, hold a task, protect sleep. Each step says whether it is the team's own example or rests on a named source.
+- A symptom box that overrides the readings.
 - A body figure with clickable regions, and the same regions as a plain list.
 - Six readings: blood pressure, heart rate, core temperature, sleep, blood sugar and mood.
 - Five sample days for one made-up crew member, including a fever on top of the space shift and a dead sensor.
-- A form to type in your own readings. They stay in your browser.
+- A form to type in your own readings and your own baseline. They stay in your browser.
 - A 7-day trend per reading (simulated).
-- A readings check before a task, and a symptom box that overrides the readings.
+- A readings check before a task. It never says anyone is fit or cleared.
 - A look-ahead: arithmetic on published averages, not a simulation of a body.
+- Daily habits taken from NASA's own pages, with tick boxes.
+- A report for Earth that says everything in one go, because a reply can take up to 20 minutes one way.
 - NASA's five hazards of human spaceflight, with links to NASA's pages.
 
 ## What is ours and what is not
 
-The reference numbers come from the sources below. The cut-offs for "expected in space", the act-now lines for pulse and low blood sugar, the task check, the symptom list and the "who to tell" steps are examples by this team. They are not NASA's rules and not medical advice. Score bands are quoted from the NEWS2 chart; this tool does not reproduce that chart or calculate a NEWS2 total.
+The reference numbers come from the sources below. The summary wording, the pattern notes, the cut-offs for "expected in space", the act-now lines for pulse and low blood sugar, the task check, the symptom list and the steps for what to do and who to tell are examples by this team. They are not NASA's rules and not medical advice. Score bands are quoted from the NEWS2 chart; this tool does not reproduce that chart or calculate a NEWS2 total.
 
 ## Run it
 
@@ -39,6 +44,8 @@ NASA Human Research Program:
 - Risk of Cardiovascular Adaptations: https://www.nasa.gov/reference/risk-of-cardiovascular-adaptations/
 - Risk of Altered Immune System Responses: https://www.nasa.gov/reference/risk-of-altered-immune-system-responses/
 - Risk of Inadequate Food and Nutrition: https://www.nasa.gov/reference/risk-of-inadequate-food-and-nutrition/
+- Risk of Behavioral Conditions and Psychiatric Disorders: https://www.nasa.gov/reference/risk-of-behavioral-conditions-and-psychiatric-disorders/
+- Risk of Reduced Cardiorespiratory and Musculoskeletal Fitness: https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/
 - Risk of Spaceflight-Induced Bone Changes: https://www.nasa.gov/reference/risk-of-spaceflight-induced-bone-changes/
 - Risk of Spaceflight Associated Neuro-ocular Syndrome: https://www.nasa.gov/reference/risk-of-spaceflight-associated-neuro-ocular-syndrome-sans/
 - ARCHeR study: https://www.nasa.gov/reference/archer/

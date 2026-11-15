@@ -38,4 +38,17 @@
     { name: "Eyes", fact: "About 70 percent of station astronauts get some swelling at the back of the eye.",
       url: "https://www.nasa.gov/reference/risk-of-spaceflight-associated-neuro-ocular-syndrome-sans/" }
   ];
+  // Daily habits that NASA's own pages say protect crews. Each line is NASA's point in plain words, with its page.
+  root.HABITS = [
+    { id: "exercise", text: "Exercise: resistance and aerobic", why: "Station crews exercise 1.5 hours a day to keep fitness and protect against muscle and bone loss.",
+      source: { name: "NASA, Risk of Reduced Cardiorespiratory and Musculoskeletal Fitness", url: "https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/" } },
+    { id: "light", text: "Keep to the day and night lighting schedule", why: "On the station, lighting follows Earth's light-dark cycle to help crews sleep.",
+      source: { name: "NASA, Risk from Inadequate Sleep and Irregular Schedules", url: "https://www.nasa.gov/reference/risk-from-inadequate-sleep-and-irregular-schedules/" } },
+    { id: "relax", text: "Take your relaxation and self-care time", why: "Crews get set times for relaxation and self-care to help prevent burnout.",
+      source: { name: "NASA, Risk from Inadequate Sleep and Irregular Schedules", url: "https://www.nasa.gov/reference/risk-from-inadequate-sleep-and-irregular-schedules/" } },
+    { id: "journal", text: "Write in your journal", why: "NASA encourages self-care options, including keeping a regular journal.",
+      source: { name: "NASA, Risk of Behavioral Conditions and Psychiatric Disorders", url: "https://www.nasa.gov/reference/risk-of-behavioral-conditions-and-psychiatric-disorders/" } },
+    { id: "diet", text: "Eat a varied, healthy diet", why: "Regular exercise and healthy diets help crews maintain cardiovascular fitness.",
+      source: { name: "NASA, Risk of Cardiovascular Adaptations", url: "https://www.nasa.gov/reference/risk-of-cardiovascular-adaptations/" } }
+  ];
 })(typeof window !== "undefined" ? window : globalThis);
