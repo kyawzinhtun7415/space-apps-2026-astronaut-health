@@ -73,7 +73,7 @@
       text: "Re-check " + list(re.map(function (k) { return name(R, k) + " in " + (U.recheckMinutes[k] || 30) + " minutes"; })) + ".",
       why: ("One reading is not enough to act on. " + re.map(function (k) {
         if (res[k].why) return res[k].why;
-        if (k === "temp") return "Core temperature is " + Math.abs(t.d).toFixed(1) + " °C above your baseline, more than the space shift explains on this flight day.";
+        if (k === "temp") return "Core temperature is " + Math.abs(t.d).toFixed(1) + " °C above your baseline, more than a flight study would explain on this flight day.";
         return name(R, k).charAt(0).toUpperCase() + name(R, k).slice(1) + " has moved from your baseline.";
       }).join(" ")).trim() });
     if (!urgent && re.length) add({ id: "tell", when: "Today", level: "watch", team: true,
@@ -104,7 +104,7 @@
 
     if (!holdNeeded && !flags.length && t && t.status === "expected") add({ id: "heat", when: "Today", level: "expected", team: true, basis: [S.stahn],
       text: "If you exercise today, stop if you feel overheated.",
-      why: "Your core temperature shows the shift measured in space crews. In the study it rose higher and faster in exercise, so the shift is a strain, not a comfort." });
+      why: "Your core temperature shows a small change that a flight study also saw. In the study it rose higher and faster in exercise, so it is a strain, not a comfort." });
 
     var later = changed.filter(function (k) { return k !== "mood" && re.indexOf(k) === -1; });
     if (later.length) add({ id: "tomorrow", when: "Tomorrow", level: "changed", team: true,

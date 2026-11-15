@@ -63,7 +63,7 @@
     temp: {
       label: "Body temperature (core)", short: "Temp", normalShort: "the chart's normal band is 36.1 to 38.0", sensor: "forehead sensor", unit: "°C", region: "core", hazard: "closed",
       feed: "Simulated forehead sensor check. Skin temperature from a shirt is a different measurement and gets no shift.",
-      inSpace: "Yes. The study behind the space shift estimated core temperature in flight with a forehead heat-flux sensor.", inSpaceSource: S.stahn,
+      inSpace: "Yes. The flight study estimated core temperature in flight with a forehead heat-flux sensor.", inSpaceSource: S.stahn,
       clinicalText: "On the NEWS2 chart 36.1 to 38.0 scores 0, 35.1 to 36.0 and 38.1 to 39.0 score 1, 39.1 or more scores 2, and 35.0 or less scores 3." + NEWS_NOTE,
       clinicalSources: [S.rcp],
       clinical: function (v) {
@@ -74,7 +74,7 @@
         return ok();
       },
       space: { shift: 1.0, rampDays: 75, text: "Resting core temperature about 1 °C higher, building gradually over 2.5 months.",
-        study: "11 astronauts. Core temperature was estimated with a forehead heat-flux sensor. It rose higher and faster in exercise, so the shift is a strain, not a comfort. This tool assumes a straight-line build-up to day 75; the study only says gradual.", source: S.stahn }
+        study: "11 astronauts. Core temperature was estimated with a forehead heat-flux sensor. It rose higher and faster in exercise, so it is a strain, not a comfort. This tool assumes a straight-line build-up to day 75; the study only says gradual.", source: S.stahn }
     },
     sleep: {
       label: "Sleep last night", short: "Sleep", normalShort: "adults need 7 or more", sensor: "wrist sensor", unit: "h", region: "head", hazard: "isolation",
@@ -97,7 +97,7 @@
         if (v >= 100) return { level: "watch", score: null, dir: "high", why: "100 mg/dL or more when fasting is above normal (American Diabetes Association)." };
         return ok();
       },
-      space: { shift: null, text: "No measured space shift found.", study: "", source: null }
+      space: { shift: null, text: "No flight study found for this reading.", study: "", source: null }
     },
     mood: {
       label: "Mood (one tap, 1 to 5)", short: "Mood", normalShort: "", sensor: "mood tap", unit: "/ 5", region: "head", hazard: "isolation",
@@ -106,7 +106,7 @@
       clinicalText: "No reference shown. This one-tap scale is the team's own and has no clinical range.",
       clinicalSources: [],
       clinical: function () { return ok(); },
-      space: { shift: null, text: "No measured space shift found.", study: "", source: null }
+      space: { shift: null, text: "No flight study found for this reading.", study: "", source: null }
     }
   };
 })(typeof window !== "undefined" ? window : globalThis);

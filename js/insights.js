@@ -15,7 +15,7 @@
     if (a.status === "cannot") return "NO READING";
     if (a.status === "serious" || a.status === "watch") return a.dir === "low" ? "LOW" : "HIGH";
     if (a.status === "changed") return a.dir === "down" ? "DOWN" : "UP";
-    if (a.status === "expected") return "EXPECTED";
+    if (a.status === "expected") return "MINOR";
     if (a.status === "nobase") return "IN RANGE";
     return "OK";
   }
@@ -31,13 +31,13 @@
     else if (att.length) { level = "watch"; headline = plural(att.length, "reading needs", "readings need") + " attention" + names; }
     else if (c.cannot.length) { level = "cannot"; headline = plural(c.cannot.length, "reading", "readings") + " could not be assessed"; }
     else if (rest.length) { level = "changed"; headline = "Nothing flagged. " + plural(rest.length, "reading has", "readings have") + " moved from your baseline"; }
-    else if (c.expected.length) { level = "expected"; headline = "Nothing flagged. " + plural(c.expected.length, "reading shows", "readings show") + " the shift measured in space crews"; }
+    else if (c.expected.length) { level = "expected"; headline = "Nothing flagged. " + plural(c.expected.length, "reading shows", "readings show") + " a small change that a flight study also saw"; }
     else if (c.nobase.length) { level = "ok"; headline = "Nothing flagged by the clinical charts. Enter your baseline to compare with your own normal"; }
     else { level = "ok"; headline = "Nothing flagged. Your readings are close to your baseline"; }
     var sub = [];
     if (att.length && rest.length) sub.push(plural(rest.length, "more has", "more have") + " moved from your baseline.");
     if ((att.length || level === "changed") && c.cannot.length) sub.push(plural(c.cannot.length, "has", "have") + " no valid reading.");
-    if (level !== "expected" && c.expected.length) sub.push(plural(c.expected.length, "shows", "show") + " the shift measured in space crews.");
+    if (level !== "expected" && c.expected.length) sub.push(plural(c.expected.length, "shows", "show") + " a small change that a flight study also saw.");
     if (c.nobase.length && (att.length || c.cannot.length)) sub.push(plural(c.nobase.length, "is", "are") + " inside the normal range, with no baseline to compare.");
     return { level: level, headline: headline, sub: sub.join(" "), counts: c, flagged: flagged, attention: att,
       chips: keys.map(function (k) { return { key: k, label: RANGES[k].short, state: state(res[k]), status: res[k].status }; }),
@@ -73,7 +73,7 @@
         var up = last > prev2, n = { kind: "warn", rank: 2, team: true, key: k,
           text: name + (k === "bp" ? " (top number)" : "") + (up ? " rose " : " fell ") + fmt(k, Math.abs(last - prev2), RANGES) + " in two days.",
           more: "It is now " + fmt(k, last, RANGES) + (cfg.normalShort ? " (" + cfg.normalShort + ")." : ".") };
-        if (k === "temp" && up) { n.more += " The space shift builds gradually over 2.5 months, not over days."; n.source = cfg.space.source; }
+        if (k === "temp" && up) { n.more += " In the flight study the rise built up gradually over 2.5 months, not over days."; n.source = cfg.space.source; }
         out.push(n);
       }
       // Flagged on most of the last 7 days.

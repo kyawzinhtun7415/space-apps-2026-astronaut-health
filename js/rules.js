@@ -55,7 +55,7 @@
           text: (m ? "Re-check in " + m + " minutes. " : "Log it again tomorrow. ") + "Tell the crew medical officer if it is still flagged, or sooner if you feel unwell." };
       }
       if (status === "changed") return { who: "You", text: "Not flagged by the clinical charts, but away from your own baseline. Re-check, and mention it at the next crew health check." };
-      if (status === "expected") return { who: "No one yet", text: "No action from these readings. This matches a small-study average measured in space. It is context, not an all-clear. If you feel unwell, tell the crew medical officer." };
+      if (status === "expected") return { who: "No one yet", text: "No action from these readings. A small flight study saw a similar change. That is context, not an all-clear. If you feel unwell, tell the crew medical officer." };
       return { who: "No one yet", text: "No action from these readings." };
     }
   };

@@ -4,7 +4,7 @@
 (function (root) {
   var DIST = { name: "NASA, Hazard: Distance From Earth", url: "https://www.nasa.gov/hrp/hazard-distance-from-earth/" };
   var AMO = { name: "NASA, Autonomous Medical Operations", url: "https://www.nasa.gov/directorates/stmd/game-changing-development-program/autonomous-medical-operations-amo/" };
-  var STATION_NOTE = "The space comparisons in this tool were measured on space station crews.";
+  var STATION_NOTE = "The flight studies used here were measured on space station crews.";
 
   // The rules do not change with place. What changes is how far the space comparison can be trusted and how fast Earth can answer.
   // Only the Mars delay has a number, because it is the only one with a source.
@@ -16,11 +16,11 @@
       evidence: STATION_NOTE + " This is the place the numbers fit best.",
       reply: "NASA says spaceflight medicine today relies heavily on telemedicine and support from the ground. Send the report and ask.", source: AMO },
     { id: "rover", name: "Rover on a surface",
-      evidence: STATION_NOTE + " A surface has partial gravity, and no study of these readings in partial gravity was opened for this prototype. The space comparison is context only here.",
+      evidence: STATION_NOTE + " A surface has partial gravity, and no study of these readings in partial gravity was opened for this prototype. They are context only here.",
       reply: "The reply delay depends on where you are: up to 20 minutes one way at Mars distance.", source: DIST,
       team: "On a rover you may be away from the base and from the crew medical officer, so \"tell the crew medical officer\" may start as a radio call. This is the team's assumption." },
     { id: "base", name: "Base on the Moon or Mars",
-      evidence: STATION_NOTE + " A surface has partial gravity, and no study of these readings in partial gravity was opened for this prototype. The space comparison is context only here.",
+      evidence: STATION_NOTE + " A surface has partial gravity, and no study of these readings in partial gravity was opened for this prototype. They are context only here.",
       reply: "The reply delay depends on where the base is: up to 20 minutes one way at Mars distance.", source: DIST }
   ];
   function place(id) { return PLACES.filter(function (p) { return p.id === id; })[0] || PLACES[0]; }

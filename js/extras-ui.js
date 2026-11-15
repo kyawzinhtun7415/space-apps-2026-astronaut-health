@@ -32,7 +32,7 @@
       '<p><strong>What is known here:</strong> ' + esc(p.evidence) + '</p>' +
       '<p><strong>Reaching Earth:</strong> ' + esc(p.reply) + ' ' + link(p.source) + '</p>' +
       (p.team ? '<p class="src">' + esc(p.team) + '</p>' : "") +
-      '<p class="src">The rules on this page do not change with place. The place changes how much weight the space comparison deserves, and it is named in the report.</p>');
+      '<p class="src">The rules on this page do not change with place. The place changes how much weight the flight studies deserve, and it is named in the report.</p>');
   }
 
   function habitCounts() {

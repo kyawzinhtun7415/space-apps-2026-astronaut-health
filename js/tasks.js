@@ -27,8 +27,8 @@
     var warm = task.exertion && RULES.tempTightensExertion && t && t.status === "changed" && t.dir === "up" && t.d >= RULES.tempRiseForExertion;
     var shiftNote = task.exertion && t && t.status === "expected" && task.needs.indexOf("temp") !== -1;
     if (flagged.length) reasons.push("Flagged: " + flagged.join(", ") + ".");
-    if (warm && !tempFlagged) reasons.push("Core temperature is " + t.d.toFixed(1) + " °C above your baseline, more than the space shift explains today. In the study it rose higher and faster in exercise, so this task waits for a re-check.");
-    if (shiftNote) belowLine.push("Core temperature shows the shift measured in space crews. It rises higher and faster in exercise, so stop if you feel overheated.");
+    if (warm && !tempFlagged) reasons.push("Core temperature is " + t.d.toFixed(1) + " °C above your baseline, more than a flight study would explain today. In the study it rose higher and faster in exercise, so this task waits for a re-check.");
+    if (shiftNote) belowLine.push("Core temperature shows a small change that a flight study also saw. It rises higher and faster in exercise, so stop if you feel overheated.");
     if (missing.length) reasons.push("No valid reading: " + missing.join(", ") + ".");
     reasons = reasons.concat(belowLine);
     if (task.needs.indexOf("mood") !== -1 && !(res.mood && res.mood.status === "watch")) reasons.push("Mood has no clinical range. It only counts here at the very bottom of this team's scale.");

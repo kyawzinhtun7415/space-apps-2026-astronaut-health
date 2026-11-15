@@ -180,15 +180,15 @@
       spaceValue = /earlier than the study/.test(text(columns[1])) ? "No comparison this early" : "8–10 mmHg lower";
       spaceNote = "Norsk 2015 · 8 men";
     } else if (key === "hr") { spaceValue = "No mean shift measured"; spaceNote = "Norsk 2015 · 8 men"; }
-    else if (key === "sleep") { spaceValue = "About 6 h in space"; spaceNote = "NASA · common does not mean harmless"; }
+    else if (key === "sleep") { spaceValue = "Crews report about 6 h"; spaceNote = "NASA · common does not mean harmless"; }
     var clinical = cfg.normalShort.replace(/^the chart's normal band is /, "").replace(/^normal at rest is /, "").replace(/^normal is /, "");
     if (key !== "mood") clinical += " " + cfg.unit;
     else clinical = "No clinical range";
     var clinicalNote = key === "temp" ? "NEWS2 score-0 band" : key === "mood" ? "Team scale, not a clinical chart" : Array.from(new Set(cfg.clinicalSources.map(function (s) { return s.name.split(",")[0]; }))).join(" / ");
     function row(label, value, note) { return '<div><dt>' + esc(label) + '</dt><dd><strong>' + esc(value) + '</strong><small>' + esc(note) + '</small></dd></div>'; }
-    html("ovCompare", row("Your baseline", baseValue, baseNote) + row("Space study", spaceValue, spaceNote) + row("Clinical reference", clinical, clinicalNote));
+    html("ovCompare", row("Your baseline", baseValue, baseNote) + row("Flight study", spaceValue, spaceNote) + row("Clinical reference", clinical, clinicalNote));
     var flagged = status && /s-watch|s-serious/.test(status.className);
-    $("ovVerdict").textContent = key === "temp" && flagged ? "Space changes do not clear this clinical flag." : text(q(".verdict", panel));
+    $("ovVerdict").textContent = key === "temp" && flagged ? "Nothing clears this clinical flag." : text(q(".verdict", panel));
     if (key === "mood") $("ovVerdict").textContent = $("ovVerdict").textContent.replace("Not flagged by the clinical chart, but it is", "On this team's scale, this is").replace("Not flagged by the clinical chart, and close to your own pre-launch numbers.", "Close to your own pre-launch numbers on this team's scale.");
     $("ovClinicalNote").textContent = key === "bp" ? text(q(".why", panel)) : key === "temp" ? "Hospital chart: a rough guide here." : "";
     $("ovClinicalNote").hidden = !$("ovClinicalNote").textContent;

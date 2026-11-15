@@ -7,7 +7,7 @@
   var STATUS = {
     ok: { word: "Close to your baseline", icon: "✓", rank: 0 },
     nobase: { word: "Inside the normal range", icon: "✓", rank: 0, cls: "ok" },
-    expected: { word: "Expected in space", icon: "≈", rank: 1 },
+    expected: { word: "Small change, not flagged", icon: "≈", rank: 1 },
     changed: { word: "Changed from your baseline", icon: "△", rank: 2 },
     cannot: { word: "Cannot assess", icon: "?", rank: 3 },
     watch: { word: "Flagged: re-check", icon: "!", rank: 4 },
@@ -91,8 +91,8 @@
       var side = k === "sleep" ? "below the recommended amount" : (a.dir === "low" ? "below the normal range" : "above the normal range");
       return "This reading is " + side + "." + (a.status === "serious" ? " It needs action now." : " It needs a re-check.");
     }
-    if (a.status === "expected") return "Not flagged by the clinical chart. It is " + signed(a.d) + unit + " from your baseline, which matches the average shift a small study measured in crews at this stage. That is context, not an all-clear.";
-    if (a.status === "changed") return "Not flagged by the clinical chart, but it is " + signed(a.d) + unit + " from your own baseline" + (a.expectedShift ? ", more than the space shift explains on flight day " + day.day : "") + ".";
+    if (a.status === "expected") return "Not flagged by the clinical chart. It is " + signed(a.d) + unit + " from your baseline, which is close to what a small flight study saw at this stage. That is context, not an all-clear.";
+    if (a.status === "changed") return "Not flagged by the clinical chart, but it is " + signed(a.d) + unit + " from your own baseline" + (a.expectedShift ? ", more than a flight study would explain on flight day " + day.day : "") + ".";
     if (a.status === "nobase") return "Not flagged by the clinical chart. Enter your baseline to compare it with your own normal.";
     return "Not flagged by the clinical chart, and close to your own pre-launch numbers.";
   }
@@ -186,7 +186,7 @@
     var dayLine = (cfg.space.rampDays && a.expectedShift !== null) ?
       '<p>On flight day ' + day.day + ' that build-up would be about ' + signed(a.expectedShift) + ' ' + cfg.unit + '.</p>' :
       (cfg.space.fromDay && day.day < cfg.space.fromDay ? '<p>Flight day ' + day.day + ' is earlier than the study measured, so no shift is applied today.</p>' : "");
-    var space = '<h3>Measured in space</h3><p>' + cfg.space.text + '</p>' + dayLine +
+    var space = '<h3>Background from flight studies</h3><p>' + cfg.space.text + '</p>' + dayLine +
       (cfg.space.study ? '<p class="src">How it was measured: ' + cfg.space.study + '</p>' : "") +
       (cfg.space.source ? '<p class="src">Source: ' + link(cfg.space.source) + '</p>' : "");
     var clin = '<h3>Clinical range</h3><p>' + cfg.clinicalText + '</p>' +
@@ -202,7 +202,7 @@
       '<div class="nasa"><span class="tag">Why check this: NASA on this part of the body</span>' +
       '<p>' + risk.fact + ' <a href="' + risk.url + '" target="_blank" rel="noopener">' + risk.name + '</a></p>' +
       '<p><strong>What helps, from the same NASA page:</strong> ' + risk.helps + '</p>' +
-      '<p><strong>Can it be measured in space?</strong> ' + cfg.inSpace + ' ' + link(cfg.inSpaceSource) + '</p>' +
+      '<p><strong>Can it be taken on board?</strong> ' + cfg.inSpace + ' ' + link(cfg.inSpaceSource) + '</p>' +
       '<p class="src">Hazard behind this reading: <a href="' + hz.url + '" target="_blank" rel="noopener">' + hz.name + '</a>.</p></div>' +
       '<p class="src">How this tool gets the reading: ' + (day.custom ? "Typed by you." : cfg.feed + (cfg.feedSource ? " " + link(cfg.feedSource) + "." : "")) + '</p>');
 
@@ -241,7 +241,7 @@
       '<div class="bar" role="img" aria-label="Bone density range ' + lo + ' to ' + hi + ' percent"><span class="hi" style="width:' + b.high + '%"></span><span class="lo" style="width:' + b.low + '%"></span></div>' +
       '<p class="src">NASA\'s average of 1% to 1.5% a month, measured on four-to-six-month missions, for everyone. <a href="' + boneRisk.url + '" target="_blank" rel="noopener">NASA bone risk page</a></p></div>' +
       '<div><h3>Core temperature</h3>' + (base.temp === null || base.temp === undefined ? '<p>Needs your baseline temperature.</p>'
-        : '<p class="big2">about ' + FORECAST.tempRamp(state.fday, base.temp, t.shift, t.rampDays).toFixed(1) + ' °C</p><p>is a baseline of ' + base.temp.toFixed(1) + ' °C plus the study\'s average shift, built up in a straight line to day 75.</p>') +
+        : '<p class="big2">about ' + FORECAST.tempRamp(state.fday, base.temp, t.shift, t.rampDays).toFixed(1) + ' °C</p><p>is a baseline of ' + base.temp.toFixed(1) + ' °C plus the small rise one flight study saw, built up in a straight line to day 75.</p>') +
       '<p class="src">Context, never a threshold. The straight line is this team\'s assumption; the study says gradual. ' + link(t.source) + ', 11 astronauts.</p></div>' +
       '<div><h3>Sleep</h3>' + (sd ?
         '<p class="big2">' + sd.debt.toFixed(1) + ' h short</p><p>of 7 hours a night over the last ' + sd.nights + ' nights of sample data. A second week like it would add the same again.</p>'
@@ -372,9 +372,9 @@
   }).join("");
   $("legend").innerHTML = [
     [{ status: "ok" }, "not flagged by the clinical charts and near your own pre-launch numbers."],
-    [{ status: "expected" }, "not flagged, and the change from your baseline matches a small-study average measured in crews for this flight day. How close counts as a match is this team's choice. Context, not an all-clear."],
+    [{ status: "expected" }, "not flagged, and the change from your baseline is close to what a small flight study saw for this flight day. How close counts as a match is this team's choice. Context, not an all-clear."],
     [{ status: "changed", dir: "up" }, "not flagged, but away from your own baseline. Up or down says which way."],
-    [{ status: "watch", dir: "high" }, "a published clinical chart puts this value outside its normal range. High or low says which side. A space shift never clears it. The panel says which chart and why."],
+    [{ status: "watch", dir: "high" }, "a published clinical chart puts this value outside its normal range. High or low says which side. Nothing else clears it. The panel says which chart and why."],
     [{ status: "serious", dir: "high" }, "the chart gives this value its top score of 3 or puts it in its crisis band, or it is past one of this team's own act-now lines. A team line is marked on the label."],
     [{ status: "cannot" }, "the reading is missing. Nothing is guessed."]
   ].map(function (x) { return "<li>" + chip(x[0]) + " " + x[1] + "</li>"; }).join("");

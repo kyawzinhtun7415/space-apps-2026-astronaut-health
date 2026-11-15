@@ -2,20 +2,20 @@
 
 A one-page web prototype for the NASA Space Apps Challenge 2026 challenge "Create Health Monitoring Software for Astronauts on Space Missions".
 
-It shows how a crew member far from Earth could judge their own health readings alone. Each reading is compared three ways: with the crew member's own pre-launch baseline, with what small studies measured in space, and with a published clinical chart. Then the tool says how you are doing today, what changed, what to do now and who to tell.
+It shows how a crew member on a long mission could keep watch over their own health. It gathers one person's readings in one place, with the body at the centre. Each reading is set against the crew member's own normal and a published clinical chart. Then the tool says how you are doing today, what changed, what to do now and who to tell.
 
 **Concept prototype with simulated data. It does not detect disease or clear anyone for a task. Not a medical device.**
 
 ## What is in it
 
-- **Today: how you are doing.** One headline, each reading at a glance (high, low, up, down, expected, OK, no reading), and notes on what changed in the last 7 days.
+- **Today: how you are doing.** One headline, each reading at a glance (high, low, up, down, small change, OK, no reading), and notes on what changed in the last 7 days.
 - **Body-centred overview.** The first screen puts the six readings and selected comparison on the left, the body in the centre, and the ordered plan on the right. A fresh load opens simulated flight day 92. The other sample days and typed readings remain available.
 - **What to do now.** Steps appear soonest first. On day 92, telling the crew medical officer now comes before holding exercise and re-checking. Each step says whether it is the team's own example or rests on a named source; the full evidence is available below the overview.
 - A symptom box that overrides the readings.
 - A body illustration made with OpenAI image generation, with live, keyboard-accessible region buttons. The picture has no baked-in status markers; the controls show the current assessment.
 - An optional **Rotate in 3D** view with a smooth, generic CC0 human mesh and four selectable regions, rendered with the local three.js library. Drag to rotate. The illustration and region list remain available without WebGL, and a flat figure is retained as a fallback.
 - Six readings: blood pressure, heart rate, core temperature, sleep, blood sugar and mood.
-- Five sample days for one made-up crew member, including a fever on top of the space shift and a dead sensor.
+- Five sample days for one made-up crew member, including a fever and a dead sensor.
 - A form to type in your own readings and your own baseline. They stay in your browser.
 - A 7-day trend per reading (simulated).
 - A readings check before a task. It never says anyone is fit or cleared.
@@ -33,7 +33,7 @@ The lower health toolkit retains the full reading details, source links, action 
 
 ## What is ours and what is not
 
-The reference numbers come from the sources below. The summary wording, the pattern notes, the cut-offs for "expected in space", the act-now lines for pulse and low blood sugar, the task check, the symptom list and the steps for what to do and who to tell are examples by this team. They are not NASA's rules and not medical advice. Score bands are quoted from the NEWS2 chart; this tool does not reproduce that chart or calculate a NEWS2 total.
+The reference numbers come from the sources below. The summary wording, the pattern notes, the cut-offs for a small change from baseline, the act-now lines for pulse and low blood sugar, the task check, the symptom list and the steps for what to do and who to tell are examples by this team. They are not NASA's rules and not medical advice. Score bands are quoted from the NEWS2 chart; this tool does not reproduce that chart or calculate a NEWS2 total.
 
 ## Run it
 
@@ -95,7 +95,7 @@ This prototype builds on a problem NASA has worked on for years. It does not cla
 - Autonomous Medical Operations: a project for an on-board Medical Decision Support System, now listed by NASA as archived. https://www.nasa.gov/directorates/stmd/game-changing-development-program/autonomous-medical-operations-amo/
 - Clinical decision support concept of operations, NASA Exploration Medical Capability: an on-board system to help the crew medical officer, and crew who are not medical experts, assess and respond to health problems. https://ntrs.nasa.gov/citations/20220017856
 
-That work covers decision support for the medical officer and for non-expert crew, and joining up medical data. What we found published is at the concept, requirements and ground prototype stage. This prototype is a small working demonstration of one crew-facing part, for routine readings: three checks on every reading, a plain summary and an ordered plan.
+That work covers decision support for the medical officer and for non-expert crew, and joining up medical data. What we found published is at the concept, requirements and ground prototype stage. This prototype is a small working demonstration of one crew-facing part, for routine readings: two checks on every reading, a plain summary and an ordered plan.
 
 ## Use of AI
 
